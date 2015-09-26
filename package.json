@@ -4,6 +4,9 @@
   "description": "Command line module to export slack history",
   "main": "index.js",
   "scripts": {
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run build",
+    "clean": "rm -rf lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/andela-aidowu/slack-history-export/issues"
   },
-  "homepage": "https://github.com/andela-aidowu/slack-history-export#readme"
+  "homepage": "https://github.com/andela-aidowu/slack-history-export#readme",
+  "dependencies": {
+    "babel": "^5.8.23"
+  }
 }
