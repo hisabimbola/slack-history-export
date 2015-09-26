@@ -1,0 +1,28 @@
+{
+  "name": "slack-history-export",
+  "version": "0.1.0",
+  "description": "Command line module to export slack history",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andela-aidowu/slack-history-export.git"
+  },
+  "keywords": [
+    "slack",
+    "export"
+  ],
+  "author": "Abimbola Idowu <abimbola2010@gmail.com> (http://hisabimbola.com)",
+  "license": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/andela-aidowu/winston-firebase/blob/master/LICENSE"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/andela-aidowu/slack-history-export/issues"
+  },
+  "homepage": "https://github.com/andela-aidowu/slack-history-export#readme"
+}
