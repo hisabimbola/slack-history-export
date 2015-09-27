@@ -60,5 +60,29 @@ export class SlackAPI {
       });
     });
   }
+
+  imHistory(opts) {
+    return new Promise((resolve, reject) => {
+      this.slack.api.im.history(opts, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  }
+
+  getSelfData() {
+    return new Promise((resolve, reject) => {
+      this.slack.api.auth.test((err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  }
 }
 
