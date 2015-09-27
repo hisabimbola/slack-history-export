@@ -4,7 +4,7 @@
   "description": "Command line module to export slack history",
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "babel src --out-dir lib",
+    "build": "babel --optional runtime src --out-dir lib",
     "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,6 +34,12 @@
   "dependencies": {
     "babel": "^5.8.23",
     "commander": "^2.8.1",
+    "jsonfile": "^2.2.2",
+    "lodash": "^3.10.1",
+    "pleasant-progress": "^1.1.0",
     "slack-api-client": "0.0.2"
+  },
+  "devDependencies": {
+    "babel-runtime": "^5.8.25"
   }
 }
