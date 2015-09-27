@@ -2,11 +2,10 @@
   "name": "slack-history-export",
   "version": "0.1.0",
   "description": "Command line module to export slack history",
-  "main": "index.js",
   "scripts": {
+    "clean": "rm -rf lib",
     "build": "babel src --out-dir lib",
     "prepublish": "npm run build",
-    "clean": "rm -rf lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,7 +16,11 @@
     "slack",
     "export"
   ],
+  "bin": {
+    "slack-history-export": "lib/index.js"
+  },
   "author": "Abimbola Idowu <abimbola2010@gmail.com> (http://hisabimbola.com)",
+  "preferGlobal": true,
   "license": [
     {
       "type": "MIT",
@@ -29,6 +32,7 @@
   },
   "homepage": "https://github.com/andela-aidowu/slack-history-export#readme",
   "dependencies": {
-    "babel": "^5.8.23"
+    "babel": "^5.8.23",
+    "slack-api-client": "0.0.2"
   }
 }
