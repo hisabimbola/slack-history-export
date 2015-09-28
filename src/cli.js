@@ -1,6 +1,8 @@
 'use strict';
 
 import program from 'commander';
+import updateNotifier from 'update-notifier';
+import pkg from './../package.json';
 import {slackHistoryExport} from './index.js';
 program
   .version('0.0.1')
@@ -19,5 +21,8 @@ if (!process.argv.slice(2).length) {
 if (!program.token) {
   throw new Error('Slack Token must be present type "slack-history-export --help to view options"');
 }
+
+//checks for update and notify the user
+updateNotifier({pkg: pkg}).notify();
 
 slackHistoryExport(program);
