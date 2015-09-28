@@ -34,6 +34,7 @@
   "homepage": "https://github.com/andela-aidowu/slack-history-export#readme",
   "dependencies": {
     "babel": "^5.8.23",
+    "babel-runtime": "^5.8.25",
     "commander": "^2.8.1",
     "csv": "^0.4.6",
     "jsonfile": "^2.2.2",
@@ -41,7 +42,4 @@
     "pleasant-progress": "^1.1.0",
     "slack-api-client": "0.0.2"
   },
-  "devDependencies": {
-    "babel-runtime": "^5.8.25"
-  }
 }
