@@ -2,9 +2,11 @@
 
 import program from 'commander';
 import {slackHistoryExport} from './index.js';
+import fs from 'fs';
+var pkg = JSON.parse(fs.readFileSync(`${__dirname}/../package.json`));
 
 program
-  .version('0.1.3')
+  .version(pkg.version)
   .usage('[options]')
   .option('-t, --token <value>', '[REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web')
   .option('-u, --username [value]', 'Enter username of the person whose chat history with you you will like to download')
