@@ -5,7 +5,7 @@ import updateNotifier from 'update-notifier';
 import pkg from './../package.json';
 import {slackHistoryExport} from './index.js';
 program
-  .version('0.1.0')
+  .version('0.1.1')
   .usage('[options]')
   .option('-t, --token <value>', '[REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web')
   .option('-u, --username [value]', 'Enter username of the person whose chat history with you you will like to download')
