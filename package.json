@@ -1,6 +1,6 @@
 {
   "name": "slack-history-export",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Command line module to export slack history",
   "scripts": {
     "clean": "rm -rf lib",
