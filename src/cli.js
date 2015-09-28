@@ -4,7 +4,7 @@ import program from 'commander';
 import {slackHistoryExport} from './index.js';
 program
   .version('0.0.1')
-  .usage('[options] <file ...>')
+  .usage('[options]')
   .option('-t, --token <value>', '[REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web')
   .option('-u, --username [value]', 'Enter username to download history')
   .option('-d, --directory [value]', 'Directory to save generated file')
