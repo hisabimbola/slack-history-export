@@ -41,5 +41,5 @@
     "lodash": "^3.10.1",
     "pleasant-progress": "^1.1.0",
     "slack-api-client": "0.0.2"
-  },
+  }
 }
