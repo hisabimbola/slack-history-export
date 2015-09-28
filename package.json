@@ -34,6 +34,7 @@
   "dependencies": {
     "babel": "^5.8.23",
     "commander": "^2.8.1",
+    "csv": "^0.4.6",
     "jsonfile": "^2.2.2",
     "lodash": "^3.10.1",
     "pleasant-progress": "^1.1.0",

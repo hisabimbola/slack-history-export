@@ -8,7 +8,8 @@ program
   .option('-t, --token <value>', '[REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web')
   .option('-u, --username [value]', 'Enter username to download history')
   .option('-d, --directory [value]', 'Directory to save generated file')
-  .option('-f, --filename [value]', 'Name of generated file. Default is "<current timestamp><username || channel || group>-slack-history" e.g "1443378584156-abimbola-slack-history.json"')
+  .option('-f, --filename [value]', 'Name of generated file. Default is "<current timestamp><username || channel || group>-slack-history" e.g \'1443378584156-abimbola-slack-history.json\'')
+  .option('-F, --format [value]', 'Format you want to download the data, supported format is [csv, json], default is \'json\'')
   .parse(process.argv);
 
 if (!program.token) {
