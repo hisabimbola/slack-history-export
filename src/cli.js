@@ -12,6 +12,10 @@ program
   .option('-F, --format [value]', 'Format you want to download the data, supported format is [csv, json], default is \'json\'')
   .parse(process.argv);
 
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
+
 if (!program.token) {
   throw new Error('Slack Token must be present type "slack-history-export --help to view options"');
 }
