@@ -14,7 +14,8 @@
   },
   "keywords": [
     "slack",
-    "export"
+    "export",
+    "es6"
   ],
   "bin": {
     "slack-history-export": "bin/cli.js"
