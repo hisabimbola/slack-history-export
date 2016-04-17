@@ -1,6 +1,7 @@
 slack-history-export
 =========
-Command line module to allow you download your slack history. \
+Command line module to allow you download your slack history.
+
 Supports IM/DM now, support for channels and private groups coming soon.
 
 
