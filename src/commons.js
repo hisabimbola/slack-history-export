@@ -7,6 +7,59 @@ import csv from 'fast-csv';
 
 jsonfile.spaces = 4;
 
+export function processGroup(token, groupName) {
+  return new Promise((resolve, reject) => {
+    const slack = new SlackAPI(token);
+    return fetchGroups(slack).then(groups => {
+      var group = getGroupInfo(groups, groupName);
+      if (!group) {
+        return reject(new Error("Group does not exist. Check group name and try again."));
+      }
+      var groupTotalHistory = [];
+      getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
+        return resolve(groupHistory);
+      }).catch(error => {
+        return reject(error);
+      });
+    }).catch(error => {
+      return reject(error);
+    });
+  });
+}
+
+function fetchGroups(slack) {
+  return new Promise((resolve, reject) => {
+    slack.groups().then((groups) => {
+      resolve(groups);
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
+
+function getGroupHistory(slack, groupTotalHistory, channel, latest) {
+  return new Promise((resolve, reject) => {
+    return slack.groupHistory({channel, latest}).then((groupHistory) => {
+      groupTotalHistory.push(...groupHistory.messages);
+      if (groupHistory.has_more) {
+        return Promise.all([getGroupHistory(slack, groupTotalHistory, channel, groupHistory.messages[groupHistory.messages.length - 1].ts)]).then(function() {
+          resolve(groupTotalHistory);
+        });
+      } else {
+        resolve(groupTotalHistory);
+      }
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function getGroupInfo(data, groupName) {
+  return _.find(data.groups, (group) => {
+    return group.name === groupName;
+  });
+}
+
 export function processChannel(token, channelName) {
   return new Promise((resolve, reject) => {
     const slack = new SlackAPI(token);

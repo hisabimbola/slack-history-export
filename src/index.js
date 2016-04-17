@@ -1,7 +1,7 @@
 #! /usr/bin/env node
 'use strict';
 
-import {processIM, processChannel, saveData} from './commons.js';
+import {processIM, processChannel, processGroup, saveData} from './commons.js';
 import PleasantProgress from 'pleasant-progress';
 
 export function slackHistoryExport(args) {
@@ -18,6 +18,14 @@ export function slackHistoryExport(args) {
   } else if (args.type === 'channel') {
     processChannel(args.token, args.channel).then(history => {
       saveData(history,args, progress,args.channel);
+    }).catch((error) => {
+      progress.stop();
+      console.log(error);
+      console.log(error.stack);
+    });
+  } else if (args.type === 'group') {
+    processGroup(args.token, args.group).then(history => {
+      saveData(history,args, progress,args.group);
     }).catch((error) => {
       progress.stop();
       console.log(error);
