@@ -35,6 +35,7 @@
   "dependencies": {
     "babel": "^5.8.23",
     "babel-runtime": "^5.8.25",
+    "chalk": "^1.1.3",
     "commander": "^2.8.1",
     "csv": "^0.4.6",
     "fast-csv": "^0.6.0",
