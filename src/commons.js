@@ -2,6 +2,92 @@
 
 import _ from 'lodash';
 import {SlackAPI} from './slack.api.js';
+import jsonfile from 'jsonfile';
+import csv from 'fast-csv';
+
+jsonfile.spaces = 4;
+
+export function processChannel(token, channelName) {
+  return new Promise((resolve, reject) => {
+    const slack = new SlackAPI(token);
+    fetchChannels(slack).then(channels => {
+      var channel = getChannelInfo(channels, channelName);
+      if (!channel) {
+        return reject(new Error("Channel does not exist. Check channel name and try again."));
+      }
+      var channelTotalHistory = [];
+      getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
+        resolve(channelHistory);
+      }).catch((error) => {
+        reject(error);
+      });
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
+
+function fetchChannels(slack) {
+  return new Promise((resolve, reject) => {
+    slack.channels().then((channels) => {
+      resolve(channels);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function getChannelHistory(slack, channelTotalHistory, channel, latest) {
+  return new Promise((resolve, reject) => {
+    return slack.channelsHistory({channel, latest}).then((channelHistory) => {
+      channelTotalHistory.push(...channelHistory.messages);
+      if (channelHistory.has_more) {
+        return Promise.all([getChannelHistory(slack, channelTotalHistory, channel, channelHistory.messages[channelHistory.messages.length - 1].ts)]).then(function() {
+          resolve(channelTotalHistory);
+        });
+      } else {
+        resolve(channelTotalHistory);
+      }
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+function getChannelInfo(data, channelName) {
+  return _.find(data.channels, (channel) => {
+    return channel.name === channelName;
+  });
+}
+
+export function saveData(data, args, progress, filename) {
+  let currentDir = args.directory || process.cwd();
+  let filePath = (args.filename) ? `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history`;
+  if (args.format === 'csv') {
+    csv.writeToPath(`${filePath}.csv`, data, {
+      headers: true,
+      transform: (row) => {
+        return {
+          Date: row.date,
+          User: row.user,
+          Message: row.text
+        };
+      }
+    }).on('finish', () => {
+      progress.stop();
+      console.log(`Done! file saved at ${filePath}.csv`);
+    });
+  } else {
+    jsonfile.writeFile(`${filePath}.json`, data, function(err) {
+      if (!err) {
+        progress.stop();
+        console.log(`Done! file saved at ${filePath}.json`);
+      } else {
+        throw err;
+      }
+    });
+  }
+}
 
 export function processIM(token, username) {
   return new Promise((resolve, reject) => {

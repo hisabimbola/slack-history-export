@@ -37,6 +37,18 @@ export class SlackAPI {
     });
   }
 
+  channelsHistory(opts) {
+    return new Promise((resolve, reject) => {
+      this.slack.api.channels.history(opts, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
+    });
+  }
+
   groups() {
     return new Promise((resolve, reject) => {
       this.slack.api.groups.list({}, (err, res) => {

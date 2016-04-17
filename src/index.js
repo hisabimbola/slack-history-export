@@ -1,46 +1,27 @@
 #! /usr/bin/env node
 'use strict';
 
-import {processIM} from './commons.js';
-import jsonfile from 'jsonfile';
-import csv from 'fast-csv';
+import {processIM, processChannel, saveData} from './commons.js';
 import PleasantProgress from 'pleasant-progress';
-jsonfile.spaces = 4;
+
 export function slackHistoryExport(args) {
   const progress = new PleasantProgress();
   progress.start('working');
-  if(args.username) {
+  if(args.type === 'dm') {
     processIM(args.token, args.username).then(history => {
-      let currentDir = args.directory || process.cwd();
-      let filePath = (args.filename) ? `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${args.username}-slack-history`;
-      if (args.format === 'csv') {
-        csv.writeToPath(`${filePath}.csv`, history, {
-          headers: true,
-          transform: (row) => {
-            return {
-              Date: row.date,
-              User: row.user,
-              Message: row.text
-            };
-          }
-        }).on('finish', () => {
-          progress.stop();
-          console.log(`Done! file saved at ${filePath}.csv`);
-        });
-      } else {
-        jsonfile.writeFile(`${filePath}.json`, history, function(err) {
-          if (!err) {
-            progress.stop();
-            console.log(`Done! file saved at ${filePath}.json`);
-          } else {
-            throw err;
-          }
-        });
-      }
+      saveData(history,args,progress,args.filename);
     }).catch(error => {
       console.log(error.stack);
       progress.stop();
       process.exit(1);
+    });
+  } else if (args.type === 'channel') {
+    processChannel(args.token, args.channel).then(history => {
+      saveData(history,args, progress,args.channel);
+    }).catch((error) => {
+      progress.stop();
+      console.log(error);
+      console.log(error.stack);
     });
   }
 }
