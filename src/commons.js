@@ -40,6 +40,21 @@ function getGroupInfo(data, groupName) {
   });
 }
 
+function reverseUserId(slack, data) {
+  return new Promise((resolve, reject) => {
+    return slack.users().then(users => {
+      for (let msg of data) {
+        if (msg.user) {
+          const userObj = getUserInfoById(users, msg.user);
+          msg.user = userObj ? userObj.name : msg.user;
+        }
+      }
+      resolve(data);
+    }).catch(error => {
+      reject(error);
+    });
+  });
+}
 
 function fetchChannels(slack) {
   return new Promise((resolve, reject) => {
@@ -86,6 +101,13 @@ function fetchUser(slack, username) {
     }).catch(error => {
       reject(error);
     });
+  });
+}
+
+// TODO #refactor map user id to userobj
+function getUserInfoById(users, userid) {
+  return _.find(users.members, (user) => {
+    return user.id === userid;
   });
 }
 
@@ -202,8 +224,12 @@ export function processGroup(token, groupName) {
         return reject(new Error("Group does not exist. Check group name and try again."));
       }
       var groupTotalHistory = [];
-      getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
-        return resolve(groupHistory);
+      return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
+        return reverseUserId(slack, groupHistory).then(refinedHistory => {
+          return resolve(refinedHistory);
+        }).catch(error => {
+          return reject(error);
+        });
       }).catch(error => {
         return reject(error);
       });
@@ -216,14 +242,18 @@ export function processGroup(token, groupName) {
 export function processChannel(token, channelName) {
   return new Promise((resolve, reject) => {
     const slack = new SlackAPI(token);
-    fetchChannels(slack).then(channels => {
+    return fetchChannels(slack).then(channels => {
       var channel = getChannelInfo(channels, channelName);
       if (!channel) {
         return reject(new Error("Channel does not exist. Check channel name and try again."));
       }
       var channelTotalHistory = [];
-      getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
-        resolve(channelHistory);
+      return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
+        return reverseUserId(slack, channelHistory).then(refinedHistory => {
+          resolve(refinedHistory);
+        }).catch(error => {
+          reject(error);
+        });
       }).catch((error) => {
         reject(error);
       });
