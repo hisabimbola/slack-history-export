@@ -9,7 +9,7 @@ export function slackHistoryExport(args) {
   progress.start('working');
   if(args.type === 'dm' || args.username) {
     processIM(args.token, args.username).then(history => {
-      saveData(history,args,progress,args.filename);
+      saveData(history,args,progress,args.username);
     }).catch(error => {
       console.log(error.stack);
       progress.stop();
