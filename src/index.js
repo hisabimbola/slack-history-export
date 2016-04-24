@@ -7,7 +7,7 @@ import PleasantProgress from 'pleasant-progress';
 export function slackHistoryExport(args) {
   const progress = new PleasantProgress();
   progress.start('working');
-  if(args.type === 'dm') {
+  if(args.type === 'dm' || args.username) {
     processIM(args.token, args.username).then(history => {
       saveData(history,args,progress,args.filename);
     }).catch(error => {
@@ -15,7 +15,7 @@ export function slackHistoryExport(args) {
       progress.stop();
       process.exit(1);
     });
-  } else if (args.type === 'channel') {
+  } else if (args.type === 'channel' || args.channel) {
     processChannel(args.token, args.channel).then(history => {
       saveData(history,args, progress,args.channel);
     }).catch((error) => {
@@ -23,7 +23,7 @@ export function slackHistoryExport(args) {
       console.log(error);
       console.log(error.stack);
     });
-  } else if (args.type === 'group') {
+  } else if (args.type === 'group' || args.group) {
     processGroup(args.token, args.group).then(history => {
       saveData(history,args, progress,args.group);
     }).catch((error) => {

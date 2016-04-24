@@ -10,7 +10,7 @@ program
   .version(pkg.version)
   .usage('[options]')
   .option('-t, --token <value>', '[REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web')
-  .option('-T, --type <value>', "[REQUIRED] Enter the type of export you want to do. available types 'dm', 'channel', 'group', 'mpim'")
+  .option('-T, --type <value>', "Enter the type of export you want to do. available types 'dm', 'channel', 'group', 'mpim'")
   .option('-u, --username [value]', 'Enter username of the person whose chat history with you you will like to download')
   .option('-c, --channel [value]', "Enter the name of the channel you will like to download")
   .option('-g, --group [value]', "Enter the name of the group you will like to download")
@@ -26,11 +26,5 @@ if (!process.argv.slice(2).length) {
 if (!program.token) {
   throw new Error('Slack Token must be present type "slack-history-export --help to view options"');
 }
-
-if (!program.type) {
-  console.error(chalk.bold.red("Error Occured: option type must me present. Type 'slack-history-export --help' to view options"));
-  process.exit(1);
-}
-
 
 slackHistoryExport(program);
