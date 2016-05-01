@@ -17,7 +17,6 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
     -h, --help               output usage information
     -V, --version            output the version number
     -t, --token <value>      [REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web
-    -T, --type <value>       [REQUIRED] Enter the type of export you want to do. available types 'dm', 'channel', 'group', 'mpim'
     -u, --username [value]   Enter username of the person whose chat history with you you will like to download
     -c, --channel [value]    Enter the name of the channel you will like to download
     -g, --group [value]      Enter the name of the group you will like to download
