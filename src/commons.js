@@ -23,10 +23,10 @@ function getGroupHistory(slack, groupTotalHistory, channel, latest) {
       groupTotalHistory.push(...groupHistory.messages);
       if (groupHistory.has_more) {
         return Promise.all([getGroupHistory(slack, groupTotalHistory, channel, groupHistory.messages[groupHistory.messages.length - 1].ts)]).then(function() {
-          resolve(groupTotalHistory);
+          resolve(groupTotalHistory.reverse());
         });
       } else {
-        resolve(groupTotalHistory);
+        resolve(groupTotalHistory.reverse());
       }
     }).catch((error) => {
       reject(error);
@@ -72,10 +72,10 @@ function getChannelHistory(slack, channelTotalHistory, channel, latest) {
       channelTotalHistory.push(...channelHistory.messages);
       if (channelHistory.has_more) {
         return Promise.all([getChannelHistory(slack, channelTotalHistory, channel, channelHistory.messages[channelHistory.messages.length - 1].ts)]).then(function() {
-          resolve(channelTotalHistory);
+          resolve(channelTotalHistory.reverse());
         });
       } else {
-        resolve(channelTotalHistory);
+        resolve(channelTotalHistory.reverse());
       }
     }).catch((error) => {
       reject(error);
@@ -153,10 +153,10 @@ function getIMHistory(slack, imTotalHistory, channel, latest) {
       imTotalHistory.push(...imHistory.messages);
       if (imHistory.has_more) {
         return Promise.all([getIMHistory(slack, imTotalHistory, channel, imHistory.messages[imHistory.messages.length - 1].ts)]).then(function() {
-          resolve(imTotalHistory);
+          resolve(imTotalHistory.reverse());
         });
       } else {
-        resolve(imTotalHistory);
+        resolve(imTotalHistory.reverse());
       }
     }).catch((error) => {
       reject(error);
@@ -164,24 +164,24 @@ function getIMHistory(slack, imTotalHistory, channel, latest) {
   });
 }
 
+function formatDate(data) {
+  for (let msg of data) {
+    msg.date = +(msg.ts*1e3).toString().split('.')[0]; //TODO Sadly, can't remember why I have to multiply. find out why
+  }
+  return data;
+}
+
 function cleanData(slack, data, user) {
   return new Promise((resolve, reject) => {
-    let formatDate = function(_data) {
-      _data.date = _data.ts;
-      delete _data.ts;
-      _data.date = new Date(_data.date*1e3);
-      return _data;
-    };
     getSelfData(slack).then(userData => {
       for(let msg of data) {
         if (msg.user === userData.user_id) {
           msg.user = userData.user;
-          msg = formatDate(msg);
         } else {
           msg.user = user.name;
-          msg = formatDate(msg);
         }
       }
+      data = formatDate(data);
       resolve(data);
     }).catch(error => {
       reject(error);
@@ -226,6 +226,7 @@ export function processGroup(token, groupName) {
       var groupTotalHistory = [];
       return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
         return reverseUserId(slack, groupHistory).then(refinedHistory => {
+          formatDate(refinedHistory)
           return resolve(refinedHistory);
         }).catch(error => {
           return reject(error);
@@ -250,6 +251,7 @@ export function processChannel(token, channelName) {
       var channelTotalHistory = [];
       return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
         return reverseUserId(slack, channelHistory).then(refinedHistory => {
+          formatDate(refinedHistory);
           resolve(refinedHistory);
         }).catch(error => {
           reject(error);
@@ -265,29 +267,60 @@ export function processChannel(token, channelName) {
 
 export function saveData(data, args, progress, filename) {
   let currentDir = args.directory || process.cwd();
-  let filePath = (args.filename) ? `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history`;
   if (args.format === 'csv') {
-    csv.writeToPath(`${filePath}.csv`, data, {
-      headers: true,
-      transform: (row) => {
-        return {
-          Date: row.date,
-          User: row.user,
-          Message: row.text
-        };
-      }
-    }).on('finish', () => {
-      progress.stop();
-      console.log(`Done! file saved at ${filePath}.csv`);
-    });
+    const filePath = (args.filename) ? (/\.csv$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.csv` : `${currentDir}/${Date.now()}-${filename}-slack-history.csv`;
+    if (args.type === 'dm' || args.username) {
+      writeToCsvDM(filePath,data, ()=> {
+        progress.stop();
+        console.log(`Done! file saved at ${filePath}`);
+      });
+    } else {
+      const channelName = args.group || args.channel; //Provided both are exclusive, bad hack.
+      writeToCsvGroup(filePath,data,channelName,()=> {
+        progress.stop();
+        console.log(`Done! file saved at ${filePath}`);
+      });
+    }
   } else {
-    jsonfile.writeFile(`${filePath}.json`, data, function(err) {
+    const filePath = (args.filename) ? (/\.json$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history.json`;
+    jsonfile.writeFile(`${filePath}`, data, function(err) {
       if (!err) {
         progress.stop();
-        console.log(`Done! file saved at ${filePath}.json`);
+        console.log(`Done! file saved at ${filePath}`);
       } else {
         throw err;
       }
     });
   }
+}
+
+function writeToCsvDM(filePath,data, cb) {
+  csv.writeToPath(`${filePath}`, data, {
+    headers: true,
+    transform: (row) => {
+      return {
+        Date: row.date,
+        User: row.user,
+        Message: row.text
+      };
+    }
+  }).on('finish', () => {
+    cb();
+  });
+}
+
+function writeToCsvGroup(filePath,data,channel, cb) {
+  csv.writeToPath(`${filePath}`, data, {
+    headers: true,
+    transform: (row) => {
+      return {
+        timestamp: row.date,
+        channel: channel,
+        username: row.user,
+        text: row.text
+      };
+    }
+  }).on('finish', () => {
+    cb();
+  });
 }
