@@ -265,7 +265,7 @@ export function processChannel(token, channelName) {
 
 export function saveData(data, args, progress, filename) {
   let currentDir = args.directory || process.cwd();
-  let filePath = (args.filename) ? `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history`;
+  const filePath = (args.filename) ? (/\.json$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history.json`;
   if (args.format === 'csv') {
     csv.writeToPath(`${filePath}.csv`, data, {
       headers: true,
@@ -281,10 +281,10 @@ export function saveData(data, args, progress, filename) {
       console.log(`Done! file saved at ${filePath}.csv`);
     });
   } else {
-    jsonfile.writeFile(`${filePath}.json`, data, function(err) {
+    jsonfile.writeFile(`${filePath}`, data, function(err) {
       if (!err) {
         progress.stop();
-        console.log(`Done! file saved at ${filePath}.json`);
+        console.log(`Done! file saved at ${filePath}`);
       } else {
         throw err;
       }
