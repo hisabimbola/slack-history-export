@@ -167,9 +167,7 @@ function getIMHistory(slack, imTotalHistory, channel, latest) {
 function cleanData(slack, data, user) {
   return new Promise((resolve, reject) => {
     let formatDate = function(_data) {
-      _data.date = _data.ts;
-      delete _data.ts;
-      _data.date = new Date(_data.date*1e3);
+      _data.date = +(_data.ts*1e3).toString().split('.')[0]; //TODO Sadly, can't remember why I have to multiply. find out why
       return _data;
     };
     getSelfData(slack).then(userData => {
@@ -267,18 +265,9 @@ export function saveData(data, args, progress, filename) {
   let currentDir = args.directory || process.cwd();
   if (args.format === 'csv') {
     const filePath = (args.filename) ? (/\.csv$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.csv` : `${currentDir}/${Date.now()}-${filename}-slack-history.csv`;
-    csv.writeToPath(`${filePath}`, data, {
-      headers: true,
-      transform: (row) => {
-        return {
-          Date: row.date,
-          User: row.user,
-          Message: row.text
-        };
-      }
-    }).on('finish', () => {
+    writeToCsvDM(filePath,data, ()=> {
       progress.stop();
-      console.log(`Done! file saved at ${filePath}.csv`);
+      console.log(`Done! file saved at ${filePath}`);
     });
   } else {
     const filePath = (args.filename) ? (/\.json$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history.json`;
@@ -291,4 +280,19 @@ export function saveData(data, args, progress, filename) {
       }
     });
   }
+}
+
+function writeToCsvDM(filePath,data, cb) {
+  csv.writeToPath(`${filePath}`, data, {
+    headers: true,
+    transform: (row) => {
+      return {
+        Date: row.date,
+        User: row.user,
+        Message: row.text
+      };
+    }
+  }).on('finish', () => {
+    cb();
+  });
 }
