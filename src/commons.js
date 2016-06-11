@@ -1,3 +1,4 @@
+/* jshint node: true */
 'use strict';
 
 import _ from 'lodash';
@@ -18,19 +19,15 @@ function fetchGroups(slack) {
 }
 
 function getGroupHistory(slack, groupTotalHistory, channel, latest) {
-  return new Promise((resolve, reject) => {
-    return slack.groupHistory({channel, latest}).then((groupHistory) => {
-      groupTotalHistory.push(...groupHistory.messages);
-      if (groupHistory.has_more) {
-        return Promise.all([getGroupHistory(slack, groupTotalHistory, channel, groupHistory.messages[groupHistory.messages.length - 1].ts)]).then(function() {
-          resolve(groupTotalHistory.reverse());
-        });
-      } else {
-        resolve(groupTotalHistory.reverse());
-      }
-    }).catch((error) => {
-      reject(error);
-    });
+  return slack.groupHistory({channel, latest}).then((groupHistory) => {
+    groupTotalHistory.push(...groupHistory.messages);
+    if (groupHistory.has_more) {
+      return Promise.all([getGroupHistory(slack, groupTotalHistory, channel, groupHistory.messages[groupHistory.messages.length - 1].ts)]).then(function() {
+        return groupTotalHistory.reverse();
+      });
+    } else {
+      return groupTotalHistory.reverse();
+    }
   });
 }
 
@@ -41,45 +38,31 @@ function getGroupInfo(data, groupName) {
 }
 
 function reverseUserId(slack, data) {
-  return new Promise((resolve, reject) => {
-    return slack.users().then(users => {
-      for (let msg of data) {
-        if (msg.user) {
-          const userObj = getUserInfoById(users, msg.user);
-          msg.user = userObj ? userObj.name : msg.user;
-        }
+  return slack.users().then(users => {
+    for (let msg of data) {
+      if (msg.user) {
+        const userObj = getUserInfoById(users, msg.user);
+        msg.user = userObj ? userObj.name : msg.user;
       }
-      resolve(data);
-    }).catch(error => {
-      reject(error);
-    });
+    }
+    return data;
   });
 }
 
 function fetchChannels(slack) {
-  return new Promise((resolve, reject) => {
-    slack.channels().then((channels) => {
-      resolve(channels);
-    }).catch((error) => {
-      reject(error);
-    });
-  });
+  return slack.channels();
 }
 
 function getChannelHistory(slack, channelTotalHistory, channel, latest) {
-  return new Promise((resolve, reject) => {
-    return slack.channelsHistory({channel, latest}).then((channelHistory) => {
-      channelTotalHistory.push(...channelHistory.messages);
-      if (channelHistory.has_more) {
-        return Promise.all([getChannelHistory(slack, channelTotalHistory, channel, channelHistory.messages[channelHistory.messages.length - 1].ts)]).then(function() {
-          resolve(channelTotalHistory.reverse());
-        });
-      } else {
-        resolve(channelTotalHistory.reverse());
-      }
-    }).catch((error) => {
-      reject(error);
-    });
+  return slack.channelsHistory({channel, latest}).then((channelHistory) => {
+    channelTotalHistory.push(...channelHistory.messages);
+    if (channelHistory.has_more) {
+      return Promise.all([getChannelHistory(slack, channelTotalHistory, channel, channelHistory.messages[channelHistory.messages.length - 1].ts)]).then(function() {
+        return channelTotalHistory.reverse();
+      });
+    } else {
+      return channelTotalHistory.reverse();
+    }
   });
 }
 
@@ -89,18 +72,13 @@ function getChannelInfo(data, channelName) {
   });
 }
 
-
 function fetchUser(slack, username) {
-  return new Promise((resolve, reject) => {
-    slack.users().then((users) => {
-      const user = getUserInfo(users, username);
-      if (!user) {
-        throw new Error('Username is invalid, please check and try again.');
-      }
-      resolve(user);
-    }).catch(error => {
-      reject(error);
-    });
+  return slack.users().then((users) => {
+    const user = getUserInfo(users, username);
+    if (!user) {
+      throw new Error('Username is invalid, please check and try again.');
+    }
+    return user;
   });
 }
 
@@ -118,27 +96,17 @@ function getUserInfo(users, username) {
 }
 
 function fetchIMs(slack, userId) {
-  return new Promise((resolve, reject) => {
-    slack.im().then(IMs => {
-      let imInfo = getUserIMInfo(IMs, userId);
-      if (!imInfo) {
-        throw new Error('You do not have any IM history with this user');
-      }
-      resolve(imInfo);
-    }).catch((error) => {
-      reject(error);
-    });
+  return slack.im().then(IMs => {
+    const imInfo = getUserIMInfo(IMs, userId);
+    if (!imInfo) {
+      throw new Error('You do not have any IM history with this user');
+    }
+    return imInfo;
   });
 }
 
 function getSelfData(slack) {
-  return new Promise((resolve, reject) => {
-    slack.getSelfData().then(userData => {
-      resolve(userData);
-    }).catch(error => {
-      reject(error);
-    });
-  });
+  return slack.getSelfData();
 }
 
 function getUserIMInfo(ims, userId) {
@@ -148,19 +116,15 @@ function getUserIMInfo(ims, userId) {
 }
 
 function getIMHistory(slack, imTotalHistory, channel, latest) {
-  return new Promise((resolve, reject) => {
-    slack.imHistory({channel, latest}).then((imHistory) => {
-      imTotalHistory.push(...imHistory.messages);
-      if (imHistory.has_more) {
-        return Promise.all([getIMHistory(slack, imTotalHistory, channel, imHistory.messages[imHistory.messages.length - 1].ts)]).then(function() {
-          resolve(imTotalHistory.reverse());
-        });
-      } else {
-        resolve(imTotalHistory.reverse());
-      }
-    }).catch((error) => {
-      reject(error);
-    });
+  return slack.imHistory({channel, latest}).then((imHistory) => {
+    imTotalHistory.push(...imHistory.messages);
+    if (imHistory.has_more) {
+      return Promise.all([getIMHistory(slack, imTotalHistory, channel, imHistory.messages[imHistory.messages.length - 1].ts)]).then(function() {
+        return imTotalHistory.reverse();
+      });
+    } else {
+      return imTotalHistory.reverse();
+    }
   });
 }
 
@@ -172,101 +136,66 @@ function formatDate(data) {
 }
 
 function cleanData(slack, data, user) {
-  return new Promise((resolve, reject) => {
-    getSelfData(slack).then(userData => {
-      for(let msg of data) {
-        if (msg.user === userData.user_id) {
-          msg.user = userData.user;
-        } else {
-          msg.user = user.name;
-        }
+  return getSelfData(slack).then(userData => {
+    for(let msg of data) {
+      if (msg.user === userData.user_id) {
+        msg.user = userData.user;
+      } else {
+        msg.user = user.name;
       }
-      data = formatDate(data);
-      resolve(data);
-    }).catch(error => {
-      reject(error);
-    });
+    }
+    return formatDate(data);
   });
 }
 
 export function processIM(token, username) {
-  return new Promise((resolve, reject) => {
-    const slack = new SlackAPI(token);
-    const imTotalHistory = [];
-    let user = {};
-    fetchUser(slack, username).then((userObj) => {
-      user = userObj;
-      fetchIMs(slack, user.id).then((imInfo) => {
-        getIMHistory(slack, imTotalHistory, imInfo.id).then((history) => {
-          cleanData(slack, history, user).then(cleanHistory => {
-            resolve(cleanHistory);
-          }).catch(error => {
-            reject(error);
-          });
-        }).catch(error => {
-          reject(error);
-        });
-      }).catch(error => {
-        reject(error);
+  const slack = new SlackAPI(token);
+  const imTotalHistory = [];
+  let user = {};
+  return fetchUser(slack, username).then((userObj) => {
+    user = userObj;
+    return fetchIMs(slack, user.id).then((imInfo) => {
+      return getIMHistory(slack, imTotalHistory, imInfo.id).then((history) => {
+        return cleanData(slack, history, user);
       });
-    }).catch(error => {
-      reject(error);
     });
   });
 }
 
 export function processGroup(token, groupName) {
-  return new Promise((resolve, reject) => {
-    const slack = new SlackAPI(token);
-    return fetchGroups(slack).then(groups => {
-      var group = getGroupInfo(groups, groupName);
-      if (!group) {
-        return reject(new Error("Group does not exist. Check group name and try again."));
-      }
-      var groupTotalHistory = [];
-      return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
-        return reverseUserId(slack, groupHistory).then(refinedHistory => {
-          formatDate(refinedHistory)
-          return resolve(refinedHistory);
-        }).catch(error => {
-          return reject(error);
-        });
-      }).catch(error => {
-        return reject(error);
+  const slack = new SlackAPI(token);
+  return fetchGroups(slack).then(groups => {
+    const group = getGroupInfo(groups, groupName);
+    if (!group) {
+      throw new Error("Group does not exist. Check group name and try again.");
+    }
+    let groupTotalHistory = [];
+    return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
+      return reverseUserId(slack, groupHistory).then(refinedHistory => {
+        return formatDate(refinedHistory);
       });
-    }).catch(error => {
-      return reject(error);
     });
   });
 }
 
 export function processChannel(token, channelName) {
-  return new Promise((resolve, reject) => {
-    const slack = new SlackAPI(token);
-    return fetchChannels(slack).then(channels => {
-      var channel = getChannelInfo(channels, channelName);
-      if (!channel) {
-        return reject(new Error("Channel does not exist. Check channel name and try again."));
-      }
-      var channelTotalHistory = [];
-      return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
-        return reverseUserId(slack, channelHistory).then(refinedHistory => {
-          formatDate(refinedHistory);
-          resolve(refinedHistory);
-        }).catch(error => {
-          reject(error);
-        });
-      }).catch((error) => {
-        reject(error);
+  const slack = new SlackAPI(token);
+  return fetchChannels(slack).then(channels => {
+    const channel = getChannelInfo(channels, channelName);
+    if (!channel) {
+      throw new Error("Channel does not exist. Check channel name and try again.");
+    }
+    let channelTotalHistory = [];
+    return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
+      return reverseUserId(slack, channelHistory).then(refinedHistory => {
+        return formatDate(refinedHistory);
       });
-    }).catch(error => {
-      reject(error);
     });
   });
 }
 
 export function saveData(data, args, progress, filename) {
-  let currentDir = args.directory || process.cwd();
+  const currentDir = args.directory || process.cwd();
   if (args.format === 'csv') {
     const filePath = (args.filename) ? (/\.csv$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.csv` : `${currentDir}/${Date.now()}-${filename}-slack-history.csv`;
     if (args.type === 'dm' || args.username) {

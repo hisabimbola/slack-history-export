@@ -11,9 +11,8 @@ export function slackHistoryExport(args) {
     processIM(args.token, args.username).then(history => {
       saveData(history,args,progress,args.username);
     }).catch(error => {
-      console.log(error.stack);
+      console.log(error);
       progress.stop();
-      process.exit(1);
     });
   } else if (args.type === 'channel' || args.channel) {
     processChannel(args.token, args.channel).then(history => {
@@ -21,7 +20,6 @@ export function slackHistoryExport(args) {
     }).catch((error) => {
       progress.stop();
       console.log(error);
-      console.log(error.stack);
     });
   } else if (args.type === 'group' || args.group) {
     processGroup(args.token, args.group).then(history => {
@@ -29,7 +27,6 @@ export function slackHistoryExport(args) {
     }).catch((error) => {
       progress.stop();
       console.log(error);
-      console.log(error.stack);
     });
   }
 }
