@@ -1,4 +1,3 @@
-/* jshint node: true */
 'use strict';
 
 import _ from 'lodash';
@@ -148,78 +147,99 @@ function cleanData(slack, data, user) {
   });
 }
 
-export function processIM(token, username) {
-  const slack = new SlackAPI(token);
+export function processIM(args) {
+  const slack = new SlackAPI(args.token);
   const imTotalHistory = [];
   let user = {};
-  return fetchUser(slack, username).then((userObj) => {
+  return fetchUser(slack, args.username).then((userObj) => {
     user = userObj;
     return fetchIMs(slack, user.id).then((imInfo) => {
       return getIMHistory(slack, imTotalHistory, imInfo.id).then((history) => {
-        return cleanData(slack, history, user);
+        const _refinedHistory = cleanData(slack, history, user);
+        return saveData(_refinedHistory, args, args.username);
       });
     });
   });
 }
 
-export function processGroup(token, groupName) {
-  const slack = new SlackAPI(token);
+export function processGroup(args) {
+  const slack = new SlackAPI(args.token);
   return fetchGroups(slack).then(groups => {
-    const group = getGroupInfo(groups, groupName);
+    const group = getGroupInfo(groups, args.group);
     if (!group) {
       throw new Error("Group does not exist. Check group name and try again.");
     }
     let groupTotalHistory = [];
     return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
       return reverseUserId(slack, groupHistory).then(refinedHistory => {
-        return formatDate(refinedHistory);
+        const _refinedHistory = formatDate(refinedHistory);
+        return saveData(_refinedHistory, args, args.group);
       });
     });
   });
 }
 
-export function processChannel(token, channelName) {
-  const slack = new SlackAPI(token);
+export function processChannel(args) {
+  const slack = new SlackAPI(args.token);
   return fetchChannels(slack).then(channels => {
-    const channel = getChannelInfo(channels, channelName);
+    const channel = getChannelInfo(channels, args.channel);
     if (!channel) {
       throw new Error("Channel does not exist. Check channel name and try again.");
     }
     let channelTotalHistory = [];
     return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
       return reverseUserId(slack, channelHistory).then(refinedHistory => {
-        return formatDate(refinedHistory);
+        const _refinedHistory = formatDate(refinedHistory);
+        return saveData(_refinedHistory, args, args.channel);
       });
     });
   });
 }
 
-export function saveData(data, args, progress, filename) {
-  const currentDir = args.directory || process.cwd();
-  if (args.format === 'csv') {
-    const filePath = (args.filename) ? (/\.csv$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.csv` : `${currentDir}/${Date.now()}-${filename}-slack-history.csv`;
-    if (args.type === 'dm' || args.username) {
-      writeToCsvDM(filePath,data, ()=> {
-        progress.stop();
-        console.log(`Done! file saved at ${filePath}`);
-      });
-    } else {
-      const channelName = args.group || args.channel; //Provided both are exclusive, bad hack.
-      writeToCsvGroup(filePath,data,channelName,()=> {
-        progress.stop();
-        console.log(`Done! file saved at ${filePath}`);
-      });
-    }
-  } else {
+function saveDataAsJSON(data, args, filename) {
+  return new Promise((resolve, reject) => {
+    const currentDir = args.directory || process.cwd();
     const filePath = (args.filename) ? (/\.json$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history.json`;
     jsonfile.writeFile(`${filePath}`, data, function(err) {
       if (!err) {
-        progress.stop();
-        console.log(`Done! file saved at ${filePath}`);
+        resolve({path: filePath});
       } else {
-        throw err;
+        reject(err);
       }
     });
+  });
+}
+
+function saveDataAsCSV(data, args, filename) {
+  return new Promise((resolve, reject) => {
+    const currentDir = args.directory || process.cwd();
+    const filePath = (args.filename) ? (/\.csv$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.csv` : `${currentDir}/${Date.now()}-${filename}-slack-history.csv`;
+    if (args.type === 'dm' || args.username) {
+      writeToCsvDM(filePath,data, (err)=> {
+        if (err) {
+          return reject(err);
+        }
+        resolve({path: filePath});
+      });
+    } else {
+      const channelName = args.group || args.channel; //Provided both are exclusive, bad hack.
+      writeToCsvGroup(filePath,data,channelName,(err)=> {
+        if (err) {
+          return reject(err);
+        }
+        resolve({path: filePath});
+      });
+    }
+  });
+}
+
+function saveData(data, args, filename) {
+  if (args.format === 'csv') {
+    return saveDataAsCSV(data, args, filename);
+  } else if (args.format && args.format !== 'json') {
+    return Promise.reject(`Format '${args.format}' not supported`);
+  } else {
+    return saveDataAsJSON(data, args, filename);
   }
 }
 
