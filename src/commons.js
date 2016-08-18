@@ -162,37 +162,60 @@ export function processIM(args) {
   });
 }
 
+function _processGroup(args,slack,group,groupName) {
+  if (!group) {
+    throw new Error('Group does not exist. Check group name and try again.');
+  }
+  let groupTotalHistory = [];
+  return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
+    return reverseUserId(slack, groupHistory).then(refinedHistory => {
+      const _refinedHistory = formatDate(refinedHistory);
+      return saveData(_refinedHistory, args, groupName);
+    });
+  });
+}
+
 export function processGroup(args) {
   const slack = new SlackAPI(args.token);
-  return fetchGroups(slack).then(groups => {
-    const group = getGroupInfo(groups, args.group);
-    if (!group) {
-      throw new Error("Group does not exist. Check group name and try again.");
-    }
-    let groupTotalHistory = [];
-    return getGroupHistory(slack, groupTotalHistory, group.id).then((groupHistory) => {
-      return reverseUserId(slack, groupHistory).then(refinedHistory => {
-        const _refinedHistory = formatDate(refinedHistory);
-        return saveData(_refinedHistory, args, args.group);
+  return fetchGroups(slack).then(result => {
+    if (args.group && args.group !== '#all') {
+      const group = getGroupInfo(result, args.group);
+      return _processGroup(args,slack,group,args.channel);
+    } else {
+      const groupPromises = [];
+      result.groups.forEach(group => {
+        groupPromises.push(_processGroup(args,slack,group,group.name));
       });
+    }
+  });
+}
+
+function _processChannel(args, slack, channel, channelName) {
+  if (!channel) {
+    throw new Error('Channel does not exist. Check channel name and try again.');
+  }
+  let channelTotalHistory = [];
+  return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
+    return reverseUserId(slack, channelHistory).then(refinedHistory => {
+      const _refinedHistory = formatDate(refinedHistory);
+      return saveData(_refinedHistory, args, channelName);
     });
   });
 }
 
 export function processChannel(args) {
   const slack = new SlackAPI(args.token);
-  return fetchChannels(slack).then(channels => {
-    const channel = getChannelInfo(channels, args.channel);
-    if (!channel) {
-      throw new Error("Channel does not exist. Check channel name and try again.");
-    }
-    let channelTotalHistory = [];
-    return getChannelHistory(slack,channelTotalHistory,channel.id).then((channelHistory) => {
-      return reverseUserId(slack, channelHistory).then(refinedHistory => {
-        const _refinedHistory = formatDate(refinedHistory);
-        return saveData(_refinedHistory, args, args.channel);
+  return fetchChannels(slack).then(result => {
+    if (args.channel && args.channel !== '#all') { //Used '#all' to avoid conflicts with slack channel name
+      const channel = getChannelInfo(result, args.channel);
+      return _processChannel(args,slack,channel,args.channel);
+    } else {
+      const channelPromises = [];
+      result.channels.forEach(channel => {
+        channelPromises.push(_processChannel(args,slack,channel,channel.name));
       });
-    });
+      return Promise.all(channelPromises);
+    }
   });
 }
 
@@ -202,7 +225,7 @@ function saveDataAsJSON(data, args, filename) {
     const filePath = (args.filename) ? (/\.json$/.test(args.filename)) ? `${currentDir}/${args.filename}` : `${currentDir}/${args.filename}.json` : `${currentDir}/${Date.now()}-${filename}-slack-history.json`;
     jsonfile.writeFile(`${filePath}`, data, function(err) {
       if (!err) {
-        resolve({path: filePath});
+        resolve({path: filePath, dir: currentDir});
       } else {
         reject(err);
       }
@@ -219,7 +242,7 @@ function saveDataAsCSV(data, args, filename) {
         if (err) {
           return reject(err);
         }
-        resolve({path: filePath});
+        resolve({path: filePath, dir: currentDir});
       });
     } else {
       const channelName = args.group || args.channel; //Provided both are exclusive, bad hack.
@@ -227,7 +250,7 @@ function saveDataAsCSV(data, args, filename) {
         if (err) {
           return reject(err);
         }
-        resolve({path: filePath});
+        resolve({path: filePath, dir: currentDir});
       });
     }
   });

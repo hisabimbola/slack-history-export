@@ -10,7 +10,11 @@ export function slackHistoryExport(args) {
   if(args.type === 'dm' || args.username) {
     processIM(args).then(result => {
       progress.stop();
-      console.log(`Done exporting history: file saved at ${result.path}`);
+      if (result.length) {
+        console.log(`Done exporting history: files saved at ${result[0].path}`);
+      } else {
+        console.log(`Done exporting history: file saved at ${result.path}`);
+      }
     }).catch(error => {
       console.error(error);
       progress.stop();
@@ -18,7 +22,11 @@ export function slackHistoryExport(args) {
   } else if (args.type === 'channel' || args.channel) {
     processChannel(args).then(result => {
       progress.stop();
-      console.log(`Done exporting history: file saved at ${result.path}`);
+      if (result.length) {
+        console.log(`Done exporting history: files saved at ${result[0].dir}`);
+      } else {
+        console.log(`Done exporting history: file saved at ${result.path}`);
+      }
     }).catch((error) => {
       progress.stop();
       console.error(error);
@@ -26,7 +34,11 @@ export function slackHistoryExport(args) {
   } else if (args.type === 'group' || args.group) {
     processGroup(args).then(result => {
       progress.stop();
-      console.log(`Done exporting history: file saved at ${result.path}`);
+      if (result.length) {
+        console.log(`Done exporting history: files saved at ${result[0].path}`);
+      } else {
+        console.log(`Done exporting history: file saved at ${result.path}`);
+      }
     }).catch((error) => {
       progress.stop();
       console.error(error);
