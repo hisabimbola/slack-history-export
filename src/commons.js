@@ -176,9 +176,9 @@ function cleanData(slack, data, user) {
     getSelfData(slack).then(userData => {
       for(let msg of data) {
         if (msg.user === userData.user_id) {
-          msg.user = userData.user;
+          msg.userName = userData.user;
         } else {
-          msg.user = user.name;
+          msg.userName = user.name;
         }
       }
       data = formatDate(data);
