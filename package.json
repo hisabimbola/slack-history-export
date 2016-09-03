@@ -6,6 +6,7 @@
     "clean": "rm -rf lib",
     "build": "babel --optional runtime src --out-dir lib",
     "prepublish": "npm run build",
+    "local": "npm run clean && npm run build && node bin/cli.js",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "repository": {
