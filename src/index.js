@@ -6,8 +6,8 @@ import PleasantProgress from 'pleasant-progress';
 
 export function slackHistoryExport(args) {
   const progress = new PleasantProgress();
-  progress.start('working');
   if(args.type === 'dm' || args.username) {
+    progress.start('working');
     processIM(args).then(result => {
       progress.stop();
       if (result.length) {
@@ -20,6 +20,7 @@ export function slackHistoryExport(args) {
       progress.stop();
     });
   } else if (args.type === 'channel' || args.channel) {
+    progress.start('working');
     processChannel(args).then(result => {
       progress.stop();
       if (result.length) {
@@ -32,6 +33,7 @@ export function slackHistoryExport(args) {
       console.error(error);
     });
   } else if (args.type === 'group' || args.group) {
+    progress.start('working');
     processGroup(args).then(result => {
       progress.stop();
       if (result.length) {
@@ -43,5 +45,8 @@ export function slackHistoryExport(args) {
       progress.stop();
       console.error(error);
     });
+  } else {
+    console.log('Error: Unknown argument format. Use "slack-history-export --help" to know valid options/arguments');
+    process.exit(1);
   }
 }
