@@ -42,6 +42,7 @@
     "fast-csv": "^2.0.0",
     "jsonfile": "^2.2.2",
     "lodash": "^3.10.1",
+    "nconf": "^0.8.4",
     "pleasant-progress": "^1.1.0",
     "slack-api-client": "0.0.2",
     "update-notifier": "^0.5.0"
