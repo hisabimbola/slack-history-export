@@ -2,7 +2,7 @@
 
 'use strict';
 
-let SlackClient = require('slack-api-client');
+const SlackClient = require('slack-api-client');
 
 export class SlackAPI {
   constructor(token) {
