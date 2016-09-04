@@ -7,7 +7,7 @@
     "build": "babel --optional runtime src --out-dir lib",
     "prepublish": "npm run build",
     "local": "npm run clean && npm run build && node bin/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "test": "NODE_ENV=test mocha --compilers js:babel/register --recursive tests/*.spec.js tests/**/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -46,5 +46,9 @@
     "pleasant-progress": "^1.1.0",
     "slack-api-client": "0.0.2",
     "update-notifier": "^0.5.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.0.2",
+    "should": "^11.1.0"
   }
 }
