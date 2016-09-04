@@ -155,8 +155,9 @@ export function processIM(args) {
     user = userObj;
     return fetchIMs(slack, user.id).then((imInfo) => {
       return getIMHistory(slack, imTotalHistory, imInfo.id).then((history) => {
-        const _refinedHistory = cleanData(slack, history, user);
-        return saveData(_refinedHistory, args, args.username);
+        return cleanData(slack, history, user).then(function(_refinedHistory) {
+          return saveData(_refinedHistory, args, args.username);
+        });
       });
     });
   });
