@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+# Lints all files passed as arguments,
+# unless they are ignored by .eslintignore
+
+# folders/files from arguments to lint
+FILES="${*:1}"
+
+./node_modules/.bin/eslint \
+  --format=node_modules/eslint-formatter-pretty \
+  $FILES
