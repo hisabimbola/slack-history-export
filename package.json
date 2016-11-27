@@ -24,7 +24,7 @@
   "preferGlobal": true,
   "scripts": {
     "test": "cross-env NODE_ENV=test NODE_PATH=./src babel-node node_modules/.bin/tape test/*.spec.js test/**/*.spec.js | tap-spec",
-    "test:watch": "chokidar src test  bin-c 'npm test'",
+    "test:watch": "chokidar src test bin -c 'npm test'",
     "build": "npm run clean && babel src -d lib",
     "clean": "rimraf lib/*",
     "commit": "git-cz",
@@ -49,12 +49,17 @@
     "settings": {
       "import/resolver": {
         "node": {
-          "paths": ["src/"]
+          "paths": [
+            "src/"
+          ]
         }
       }
     }
   },
-  "files": ["lib/", "cli.js"],
+  "files": [
+    "lib/",
+    "bin/cli.js"
+  ],
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-eslint": "^6.1.2",
@@ -75,6 +80,7 @@
     "ghooks": "^1.3.2",
     "nyc": "^8.1.0",
     "rimraf": "^2.5.4",
+    "sinon": "^1.17.6",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.0",
     "validate-commit-msg": "^2.8.0"
@@ -88,5 +94,8 @@
     ],
     "sourceMap": false,
     "instrument": false
+  },
+  "dependencies": {
+    "slack-node": "^0.1.8"
   }
 }
