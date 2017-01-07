@@ -26,9 +26,10 @@ export default class SlackAPI {
       })
     })
   }
-  channelHistory () {
+  channelHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.channels.history({ token: this.token }, (err, res) => {
+      const params = { token: this.token, channel, latest }
+      this.slack.channels.history(params, (err, res) => {
         if (err)
           reject(err)
         else
@@ -46,9 +47,10 @@ export default class SlackAPI {
       })
     })
   }
-  groupHistory () {
+  groupHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.groups.history({ token: this.token }, (err, res) => {
+      const params = { token: this.token, channel, latest }
+      this.slack.groups.history(params, (err, res) => {
         if (err)
           reject(err)
         else
@@ -66,9 +68,10 @@ export default class SlackAPI {
       })
     })
   }
-  imHistory () {
+  imHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.im.history({ token: this.token }, (err, res) => {
+      const params = { token: this.token, channel, latest }
+      this.slack.im.history(params, (err, res) => {
         if (err)
           reject(err)
         else
@@ -86,9 +89,10 @@ export default class SlackAPI {
       })
     })
   }
-  mpimHistory () {
+  mpimHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.mpim.history({ token: this.token }, (err, res) => {
+      const params = { token: this.token, channel, latest }
+      this.slack.mpim.history(params, (err, res) => {
         if (err)
           reject(err)
         else
