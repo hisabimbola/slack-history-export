@@ -8,7 +8,7 @@ export default class SlackAPI {
 
   users () {
     return new Promise((resolve, reject) => {
-      this.slack.user.list({ token: this.token }, (err, res) => {
+      this.slack.users.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else

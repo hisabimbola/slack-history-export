@@ -12,7 +12,7 @@ else
 
 const mockSlack = function mockSlack () {
   return {
-    user: {
+    users: {
       list: (token, cb) => {
         cb(null, {})
       },
@@ -132,7 +132,7 @@ test(`SlackApi::users
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack.user, 'list')
+  const spy = sinon.spy(slackApi.slack.users, 'list')
   slackApi.users().then((result) => {
     t.deepEqual(
       spy.args[0][0],
