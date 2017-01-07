@@ -1,14 +1,14 @@
-import Slack from 'slack-node'
+import slack from 'slack'
 
 export default class SlackAPI {
   constructor (token) {
-    this.slackToken = token
-    this.slack = new Slack(token)
+    this.token = token
+    this.slack = slack
   }
 
   users () {
     return new Promise((resolve, reject) => {
-      this.slack.api('users.list', (err, res) => {
+      this.slack.user.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -18,7 +18,7 @@ export default class SlackAPI {
   }
   channels () {
     return new Promise((resolve, reject) => {
-      this.slack.api('channels.list', (err, res) => {
+      this.slack.channels.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -28,7 +28,7 @@ export default class SlackAPI {
   }
   channelHistory () {
     return new Promise((resolve, reject) => {
-      this.slack.api('channels.history', (err, res) => {
+      this.slack.channels.history({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -38,7 +38,7 @@ export default class SlackAPI {
   }
   groups () {
     return new Promise((resolve, reject) => {
-      this.slack.api('groups.list', (err, res) => {
+      this.slack.groups.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -48,7 +48,7 @@ export default class SlackAPI {
   }
   groupHistory () {
     return new Promise((resolve, reject) => {
-      this.slack.api('groups.history', (err, res) => {
+      this.slack.groups.history({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -58,7 +58,7 @@ export default class SlackAPI {
   }
   im () {
     return new Promise((resolve, reject) => {
-      this.slack.api('im.list', (err, res) => {
+      this.slack.im.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -68,7 +68,7 @@ export default class SlackAPI {
   }
   imHistory () {
     return new Promise((resolve, reject) => {
-      this.slack.api('im.history', (err, res) => {
+      this.slack.im.history({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -78,7 +78,7 @@ export default class SlackAPI {
   }
   mpim () {
     return new Promise((resolve, reject) => {
-      this.slack.api('mpim.list', (err, res) => {
+      this.slack.mpim.list({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -88,7 +88,7 @@ export default class SlackAPI {
   }
   mpimHistory () {
     return new Promise((resolve, reject) => {
-      this.slack.api('mpim.history', (err, res) => {
+      this.slack.mpim.history({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else
@@ -98,7 +98,7 @@ export default class SlackAPI {
   }
   getSelfData () {
     return new Promise((resolve, reject) => {
-      this.slack.api('auth.test', (err, res) => {
+      this.slack.auth.test({ token: this.token }, (err, res) => {
         if (err)
           reject(err)
         else

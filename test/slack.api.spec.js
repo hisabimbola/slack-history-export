@@ -12,19 +12,97 @@ else
 
 const mockSlack = function mockSlack () {
   return {
-    api: (endpoint, cb) => {
-      cb(null, {})
+    user: {
+      list: (token, cb) => {
+        cb(null, {})
+      },
+    },
+    channels: {
+      list: (token, cb) => {
+        cb(null, {})
+      },
+      history: (token, cb) => {
+        cb(null, {})
+      },
+    },
+    groups: {
+      list: (token, cb) => {
+        cb(null, {})
+      },
+      history: (token, cb) => {
+        cb(null, {})
+      },
+    },
+    im: {
+      list: (token, cb) => {
+        cb(null, {})
+      },
+      history: (token, cb) => {
+        cb(null, {})
+      },
+    },
+    mpim: {
+      list: (token, cb) => {
+        cb(null, {})
+      },
+      history: (token, cb) => {
+        cb(null, {})
+      },
+    },
+    auth: {
+      test: (token, cb) => {
+        cb(null, {})
+      },
+    },
+  }
+}
+const mockSlackErr = function mockSlackErr () {
+  return {
+    user: {
+      list: (token, cb) => {
+        cb(new Error(), null)
+      },
+    },
+    channels: {
+      list: (token, cb) => {
+        cb(new Error(), null)
+      },
+      history: (token, cb) => {
+        cb(new Error(), null)
+      },
+    },
+    groups: {
+      list: (token, cb) => {
+        cb(new Error(), null)
+      },
+      history: (token, cb) => {
+        cb(new Error(), null)
+      },
+    },
+    im: {
+      list: (token, cb) => {
+        cb(new Error(), null)
+      },
+      history: (token, cb) => {
+        cb(new Error(), null)
+      },
+    },
+    mpim: {
+      list: (token, cb) => {
+        cb(new Error(), null)
+      },
+      history: (token, cb) => {
+        cb(new Error(), null)
+      },
+    },
+    auth: {
+      test: (token, cb) => {
+        cb(new Error(), null)
+      },
     },
   }
 }
 
-const mockSlackErr = function mockSlackErr () {
-  return {
-    api: (endpoint, cb) => {
-      cb(new Error(), null)
-    },
-  }
-}
 test('SlackApi is a function', (t) => {
   t.equal(typeof SlackApi, 'function')
 
@@ -36,7 +114,7 @@ test(`SlackApi
   const slackApi = new SlackApi(SLACK_API_TOKEN)
 
   t.ok(slackApi.slack, 'a new instance of slack api is created')
-  t.ok(slackApi.slackToken, 'Slack token is set')
+  t.ok(slackApi.token, 'Slack token is set')
   t.ok(slackApi.users, 'users list method is present')
   t.ok(slackApi.channels, 'channels list method is present')
   t.ok(slackApi.channelHistory, 'channelHistory method is present')
@@ -54,12 +132,12 @@ test(`SlackApi::users
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.user, 'list')
   slackApi.users().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'users.list',
-      'Users list method is called with \'users.list\''
+      { token: SLACK_API_TOKEN },
+      'User list method first arg is params containing token'
     )
     t.ok(result, 'Users list is resolved successfully')
     t.end()
@@ -80,12 +158,12 @@ test(`SlackApi::channels
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.channels, 'list')
   slackApi.channels().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'channels.list',
-      'channels list method is called with \'channels.list\''
+      { token: SLACK_API_TOKEN },
+      'Channels list method first arg is params containing token'
     )
     t.ok(result, 'Channels list is resolved successfully')
     t.end()
@@ -106,12 +184,12 @@ test(`SlackApi::channelHistory
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.channels, 'history')
   slackApi.channelHistory().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'channels.history',
-      'channel history method is called with \'channels.history\''
+      { token: SLACK_API_TOKEN },
+      'Channels history method first arg is params containing token'
     )
     t.ok(result, 'Channel history is resolved successfully')
     t.end()
@@ -132,12 +210,12 @@ test(`SlackApi::groups
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.groups, 'list')
   slackApi.groups().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'groups.list',
-      'groups method is called with \'groups.list\''
+      { token: SLACK_API_TOKEN },
+      'Groups list method first arg is params containing token'
     )
     t.ok(result, 'Groups list promise is resolved successfully')
     t.end()
@@ -158,12 +236,12 @@ test(`SlackApi::groupHistory
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.groups, 'history')
   slackApi.groupHistory().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'groups.history',
-      'group history method is called with \'groups.history\''
+      { token: SLACK_API_TOKEN },
+      'Groups history method first arg is params containing token'
     )
     t.ok(result, 'Groups history promise is resolved successfully')
     t.end()
@@ -184,12 +262,12 @@ test(`SlackApi::im
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.im, 'list')
   slackApi.im().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'im.list',
-      'im method is called with \'im.list\''
+      { token: SLACK_API_TOKEN },
+      'Im list method first arg is params containing token'
     )
     t.ok(result, 'Im promise is resolved successfully')
     t.end()
@@ -210,12 +288,12 @@ test(`SlackApi::imHistory
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.im, 'history')
   slackApi.imHistory().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'im.history',
-      'im history method is called with \'im.history\''
+      { token: SLACK_API_TOKEN },
+      'Im history method first arg is params containing token'
     )
     t.ok(result, 'Im history promise is resolved successfully')
     t.end()
@@ -236,12 +314,12 @@ test(`SlackApi::mpim
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.mpim, 'list')
   slackApi.mpim().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'mpim.list',
-      'mpim list method is called with \'mpim.list\''
+      { token: SLACK_API_TOKEN },
+      'Mpim list method first arg is params containing token'
     )
     t.ok(result, 'mpim list promise is resolved successfully')
     t.end()
@@ -262,12 +340,12 @@ test(`SlackApi::mpimHistory
   should resolve if no error`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.mpim, 'history')
   slackApi.mpimHistory().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'mpim.history',
-      'mpim history method is called with \'mpim.history\''
+      { token: SLACK_API_TOKEN },
+      'Mpim history method first arg is params containing token'
     )
     t.ok(result, 'mpim history promise is resolved successfully')
     t.end()
@@ -288,12 +366,12 @@ test(`SlackApi::getSelfData
   should return getSelfData in slack org`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlack()
-  const spy = sinon.spy(slackApi.slack, 'api')
+  const spy = sinon.spy(slackApi.slack.auth, 'test')
   slackApi.getSelfData().then((result) => {
-    t.equal(
+    t.deepEqual(
       spy.args[0][0],
-      'auth.test',
-      'getSelfData method is called with \'auth.test\''
+      { token: SLACK_API_TOKEN },
+      'Auth test method first arg is params containing token'
     )
     t.ok(result, 'getSelfData promise is resolved successfully')
     t.end()
@@ -301,7 +379,7 @@ test(`SlackApi::getSelfData
 })
 
 test(`SlackApi::getSelfData
-  should return getSelfData in slack org`, (t) => {
+  should reject when error occurs`, (t) => {
   const slackApi = new SlackApi(SLACK_API_TOKEN)
   slackApi.slack = mockSlackErr()
   slackApi.getSelfData().catch((result) => {
