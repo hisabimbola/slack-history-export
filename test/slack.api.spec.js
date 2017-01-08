@@ -58,7 +58,7 @@ const mockSlack = function mockSlack () {
 }
 const mockSlackErr = function mockSlackErr () {
   return {
-    user: {
+    users: {
       list: (token, cb) => {
         cb(new Error(), null)
       },
