@@ -23,10 +23,10 @@
   },
   "preferGlobal": true,
   "scripts": {
-    "test": "cross-env NODE_ENV=test NODE_PATH=./src babel-node node_modules/.bin/tape test/*.spec.js test/**/*.spec.js | tap-spec",
+    "test": "npm run build && cross-env NODE_ENV=test NODE_PATH=./src babel-node node_modules/.bin/tape test/*.spec.js test/**/*.spec.js | tap-spec",
     "test:watch": "chokidar src test bin -c 'npm test'",
     "build": "npm run clean && babel src -d lib",
-    "clean": "rimraf lib/*",
+    "clean": "rimraf lib/* coverage",
     "commit": "git-cz",
     "prepublish": "npm run build",
     "codecov": "cat ./coverage/lcov.info | codecov",
