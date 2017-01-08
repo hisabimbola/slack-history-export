@@ -9,11 +9,11 @@ export default class SlackHistoryExport {
     this.slack = new SlackApi(this.args.token)
   }
   processIMs (outputStream) {
-    this.fetchUserDetail(this.args.username).then((userObj) => {
-      this.fetchIMInfo(userObj).then((imInfo) => {
-        this.fetchIMHistory(outputStream, imInfo.id)
-      })
-    })
+    return this.fetchUserDetail(this.args.username).then(
+      userObj => this.fetchIMInfo(userObj).then(
+        imInfo => this.fetchIMHistory(outputStream, imInfo.id)
+      )
+    ).catch(error => console.error(error))
   }
   fetchIMInfo (userObj) {
     return this.slack.im().then(ims => getUserIMInfo(ims, userObj))
@@ -21,10 +21,10 @@ export default class SlackHistoryExport {
   fetchUserDetail (username) {
     return this.slack.users().then(users => getUserInfo(users, username))
   }
-  fetchIMHistory (fnCalled, outputStream, channel, latest) {
+  fetchIMHistory (outputStream, channel, latest, fnCalled) {
     if (!fnCalled)
       outputStream.write('[\n') // Use to detect the first call of the method
-    this.slack.imHistory({ channel, latest }).then((imHistory) => {
+    return this.slack.imHistory(channel, latest).then((imHistory) => {
       _.each(imHistory.messages, (message, index) => {
         outputStream.write(JSON.stringify(message, null, 2))
 
@@ -33,12 +33,16 @@ export default class SlackHistoryExport {
       })
       if (imHistory.has_more)
         return this.fetchIMHistory(
-          true,
           outputStream,
           channel,
-          imHistory.messages[imHistory.messages.length - 1].ts
+          imHistory.messages[imHistory.messages.length - 1].ts,
+          true,
         )
-      outputStream.end(']\n')
+      if (outputStream !== process.stdout) // Process.stdout cannot be closed
+        outputStream.end(']\n')
+      else
+        outputStream.write(']\n')
+
       return Promise.resolve()
     })
   }

@@ -108,7 +108,7 @@ test(`SlackHistoryExport::fetchIMHistory
     t.deepEqual(_result, mockObj.messages)
     t.end()
   })
-  slackHistoryExport.fetchIMHistory(false, outputStream, 'CHANNEL')
+  slackHistoryExport.fetchIMHistory(outputStream, 'CHANNEL', null, false)
 })
 
 test(`SlackHistoryExport::processIMs
@@ -155,7 +155,7 @@ test(`SlackHistoryExport::processIMs
     t.deepEqual(_result, mockObj.messages)
     t.end()
   })
-  slackHistoryExport.fetchIMHistory(false, outputStream, 'CHANNEL')
+  slackHistoryExport.fetchIMHistory(outputStream, 'CHANNEL', null, false)
 })
 
 test(`SlackHistoryExport::fetchIMHistory
@@ -221,7 +221,7 @@ test(`SlackHistoryExport::fetchIMHistory
     slackHistoryExport.slack.imHistory.restore()
     t.end()
   })
-  slackHistoryExport.fetchIMHistory(false, outputStream, 'CHANNEL')
+  slackHistoryExport.fetchIMHistory(outputStream, 'CHANNEL', null, false)
 })
 
 test(`SlackHistoryExport::fetchIMInfo
