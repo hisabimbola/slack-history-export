@@ -34,12 +34,16 @@ Download message history from slack`
   .option('type', {
     alias: 'T',
     describe: 'Type of export you want to do',
-    choices: ['dm'],
+    choices: ['dm', 'group'],
   })
   .option('username', {
     alias: 'u',
     describe: `Username of the person who chat
     history with you you want to download`,
+  })
+  .option('group', {
+    alias: 'g',
+    describe: 'Name of the group to download history',
   })
   .option('filepath', {
     alias: 'f',
@@ -63,3 +67,5 @@ const slackHistoryExport = new SlackHistoryExport(args)
 
 if (args.username)
   slackHistoryExport.processIMs(args.filepath)
+else if (args.group)
+  slackHistoryExport.processGroups(args.filepath)

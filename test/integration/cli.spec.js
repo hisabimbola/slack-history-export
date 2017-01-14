@@ -42,3 +42,15 @@ test(`CLI
       t.end()
     })
 })
+
+test(`CLI
+  should export slack group history`, (t) => {
+  exec(`${binPath} -t ${SLACK_API_TOKEN} -g store`,
+    (error, stdout, stderr) => {
+      t.false(error && stderr, 'returns no error')
+      const result = JSON.parse(stdout)
+      t.ok(result, 'slack history is exported')
+      t.ok(result.length > 0, 'Slack history array is not empty')
+      t.end()
+    })
+})
