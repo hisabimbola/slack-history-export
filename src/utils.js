@@ -22,3 +22,13 @@ export function getUserIMInfo (ims, userObj) {
     `You do not have any IM history with this user:${userObj.user}`
   )
 }
+
+export function getGroupInfo (groups, groupName) {
+  const _group = _.find(
+    groups.members,
+    group => group.name.toLowerCase() === groupName.toLowerCase()
+  )
+  if (_group)
+    return Promise.resolve(_group)
+  return Promise.reject('GroupName is invalid, please check and try again.')
+}

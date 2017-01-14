@@ -1,6 +1,10 @@
 import _ from 'lodash'
 import SlackApi from './slack.api'
-import { getUserInfo, getUserIMInfo } from './utils'
+import {
+  getUserInfo,
+  getUserIMInfo,
+  getGroupInfo,
+} from './utils'
 
 export default class SlackHistoryExport {
   constructor (args, logger) {
@@ -13,13 +17,45 @@ export default class SlackHistoryExport {
       userObj => this.fetchIMInfo(userObj).then(
         imInfo => this.fetchIMHistory(outputStream, imInfo.id)
       )
-    ).catch(error => console.error(error))
+    )
+  }
+  processGroups (outputStream) {
+    return this.fetchGroupDetails(this.args.group).then(
+      groupObj => this.fetchGroupHistory(outputStream, groupObj.id)
+    )
+  }
+  fetchGroupDetails (groupName) {
+    return this.slack.groups().then(groups => getGroupInfo(groups, groupName))
   }
   fetchIMInfo (userObj) {
     return this.slack.im().then(ims => getUserIMInfo(ims, userObj))
   }
   fetchUserDetail (username) {
     return this.slack.users().then(users => getUserInfo(users, username))
+  }
+  fetchGroupHistory (outputStream, channel, latest, fnCalled) {
+    if (!fnCalled)
+      outputStream.write('[\n')
+    return this.slack.groupHistory(channel, latest).then((groupHistory) => {
+      _.each(groupHistory.messages, (message, index) => {
+        outputStream.write(JSON.stringify(message, null, 2))
+
+        if (groupHistory.has_more || index !== groupHistory.messages.length - 1)
+          outputStream.write(',')
+      })
+      if (groupHistory.has_more)
+        return this.fetchGroupHistory(
+          outputStream,
+          channel,
+          groupHistory.messages[groupHistory.messages.length - 1].ts,
+          true,
+        )
+      if (outputStream !== process.stdout)
+        outputStream.end(']\n')
+      else
+        outputStream.write(']\n')
+      return Promise.resolve()
+    })
   }
   fetchIMHistory (outputStream, channel, latest, fnCalled) {
     if (!fnCalled)

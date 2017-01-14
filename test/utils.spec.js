@@ -1,6 +1,56 @@
 import test from 'tape'
-import { getUserInfo, getUserIMInfo } from 'utils'
+import {
+  getUserInfo,
+  getUserIMInfo,
+  getGroupInfo,
+} from 'utils'
 
+test(`getGroupInfo
+  should be a function`, (t) => {
+  t.equal(typeof getGroupInfo, 'function', 'getGroupInfo is a function')
+  t.end()
+})
+
+test(`getGroupInfo
+  should find group in a list of groups`, (t) => {
+  const mockGroupList = {
+    members: [
+      {
+        id: 'U023BECGF',
+        name: 'admins',
+      },
+    ],
+  }
+  const groupName = 'admins'
+  getGroupInfo(mockGroupList, groupName).then((result) => {
+    t.ok(result)
+    t.equal(result.name, 'admins', 'Groups details is returned')
+    t.end()
+  })
+})
+
+test(`getGroupInfo
+  should return an error if groupname does not exist`, (t) => {
+  const mockGroupList = {
+    members: [
+      {
+        id: 'U023BECGF',
+        name: 'admins',
+      },
+    ],
+  }
+  const groupName = 'Anonymous'
+  getGroupInfo(mockGroupList, groupName)
+    .then(t.fail)
+    .catch((error) => {
+      t.ok(error)
+      t.equal(
+        error,
+        'GroupName is invalid, please check and try again.',
+        'Error message is returned.')
+      t.end()
+    })
+})
 test(`getUserInfo
   should be a function`, (t) => {
   t.equal(typeof getUserInfo, 'function', 'getUserInfo is a function')
