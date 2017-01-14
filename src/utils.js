@@ -25,7 +25,7 @@ export function getUserIMInfo (ims, userObj) {
 
 export function getGroupInfo (groups, groupName) {
   const _group = _.find(
-    groups.members,
+    groups.groups,
     group => group.name.toLowerCase() === groupName.toLowerCase()
   )
   if (_group)

@@ -14,7 +14,7 @@ test(`getGroupInfo
 test(`getGroupInfo
   should find group in a list of groups`, (t) => {
   const mockGroupList = {
-    members: [
+    groups: [
       {
         id: 'U023BECGF',
         name: 'admins',
@@ -32,7 +32,7 @@ test(`getGroupInfo
 test(`getGroupInfo
   should return an error if groupname does not exist`, (t) => {
   const mockGroupList = {
-    members: [
+    groups: [
       {
         id: 'U023BECGF',
         name: 'admins',

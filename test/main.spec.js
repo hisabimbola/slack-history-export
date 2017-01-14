@@ -85,7 +85,7 @@ test(`SlackHistoryExport::fetchGroupDetails
   const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
   slackHistoryExport.slack = {
     groups: () => Promise.resolve({
-      members: [
+      groups: [
         {
           id: 'U023BECGF',
           name: 'admins',
