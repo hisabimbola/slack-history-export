@@ -4,6 +4,7 @@ import {
   getUserInfo,
   getUserIMInfo,
   getGroupInfo,
+  getChannelInfo,
 } from './utils'
 
 export default class SlackHistoryExport {
@@ -24,8 +25,16 @@ export default class SlackHistoryExport {
       groupObj => this.fetchGroupHistory(outputStream, groupObj.id)
     )
   }
+  processChannels (outputStream) {
+    return this.fetchChannelDetails(this.args.channel).then(
+      channelObj => this.fetchChannelHistory(outputStream, channelObj.id)
+    )
+  }
   fetchGroupDetails (groupName) {
     return this.slack.groups().then(groups => getGroupInfo(groups, groupName))
+  }
+  fetchChannelDetails (chanName) {
+    return this.slack.channels().then(chans => getChannelInfo(chans, chanName))
   }
   fetchIMInfo (userObj) {
     return this.slack.im().then(ims => getUserIMInfo(ims, userObj))
@@ -48,6 +57,30 @@ export default class SlackHistoryExport {
           outputStream,
           channel,
           groupHistory.messages[groupHistory.messages.length - 1].ts,
+          true,
+        )
+      if (outputStream !== process.stdout)
+        outputStream.end(']\n')
+      else
+        outputStream.write(']\n')
+      return Promise.resolve()
+    })
+  }
+  fetchChannelHistory (outputStream, channel, latest, fnCalled) {
+    if (!fnCalled)
+      outputStream.write('[\n')
+    return this.slack.channelHistory(channel, latest).then((chanHistory) => {
+      _.each(chanHistory.messages, (message, index) => {
+        outputStream.write(JSON.stringify(message, null, 2))
+
+        if (chanHistory.has_more || index !== chanHistory.messages.length - 1)
+          outputStream.write(',')
+      })
+      if (chanHistory.has_more)
+        return this.fetchChannelHistory(
+          outputStream,
+          channel,
+          chanHistory.messages[chanHistory.messages.length - 1].ts,
           true,
         )
       if (outputStream !== process.stdout)

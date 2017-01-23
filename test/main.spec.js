@@ -33,6 +33,14 @@ test(`SlackHistoryExport
     slackHistoryExport.fetchGroupDetails,
     'fetchGroupDetails method is present'
   )
+  t.ok(
+    slackHistoryExport.fetchChannelDetails,
+    'fetchChannelDetails method is present'
+  )
+  t.ok(
+    slackHistoryExport.fetchChannelHistory,
+    'fetchChannelHistory method is present'
+  )
   t.end()
 })
 
@@ -95,6 +103,25 @@ test(`SlackHistoryExport::fetchGroupDetails
   }
   slackHistoryExport.fetchGroupDetails('admins').then((result) => {
     t.equal(result.name, 'admins', 'Group details is returned')
+    t.end()
+  })
+})
+
+test(`SlackHistoryExport::fetchChannelDetails
+  should fetchChannelDetails`, (t) => {
+  const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
+  slackHistoryExport.slack = {
+    channels: () => Promise.resolve({
+      channels: [
+        {
+          id: 'U023BECGF',
+          name: 'general',
+        },
+      ],
+    }),
+  }
+  slackHistoryExport.fetchChannelDetails('general').then((result) => {
+    t.equal(result.name, 'general', 'channel details is returned')
     t.end()
   })
 })
@@ -175,6 +202,45 @@ test(`SlackHistoryExport::fetchGroupHistory
     t.end()
   })
   slackHistoryExport.fetchGroupHistory(outputStream, 'CHANNEL', null, false)
+})
+
+test(`SlackHistoryExport::fetchChannelHistory
+  should fetchAll channel histories and stream out`, (t) => {
+  const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
+  const mockObj = {
+    ok: true,
+    messages: [
+      {
+        type: 'message',
+        ts: '1358546515.000008',
+        user: 'U2147483896',
+        text: 'Hello',
+      },
+      {
+        type: 'message',
+        ts: '1358546515.000007',
+        user: 'U2147483896',
+        text: 'World',
+        is_starred: true,
+      },
+      {
+        type: 'something_else',
+        ts: '1358546515.000007',
+        wibblr: true,
+      },
+    ],
+    has_more: false,
+  }
+  slackHistoryExport.slack = {
+    channelHistory: () => Promise.resolve(mockObj),
+  }
+  const outputStream = streamTest['v2'].toText((err, result) => {
+    t.notOk(err, 'No error occurred')
+    const _result = JSON.parse(result)
+    t.deepEqual(_result, mockObj.messages)
+    t.end()
+  })
+  slackHistoryExport.fetchChannelHistory(outputStream, 'CHANNEL', null, false)
 })
 
 test(`SlackHistoryExport::processIMs
@@ -270,6 +336,52 @@ test(`SlackHistoryExport::processGroups
   slackHistoryExport.fetchGroupHistory(outputStream, 'CHANNEL', null, false)
 })
 
+test(`SlackHistoryExport::processChannels
+  should fetchAll channel history and stream out`, (t) => {
+  const mockChannelObj = {
+    id: 'G0LPPVBHN',
+    name: 'general',
+  }
+  const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
+  const chanDetailStub = sinon.stub(slackHistoryExport, 'fetchChannelDetails')
+  chanDetailStub.onFirstCall().returns(Promise.resolve(mockChannelObj))
+
+  const mockObj = {
+    ok: true,
+    messages: [
+      {
+        type: 'message',
+        ts: '1358546515.000008',
+        user: 'U2147483896',
+        text: 'Hello',
+      },
+      {
+        type: 'message',
+        ts: '1358546515.000007',
+        user: 'U2147483896',
+        text: 'World',
+        is_starred: true,
+      },
+      {
+        type: 'something_else',
+        ts: '1358546515.000007',
+        wibblr: true,
+      },
+    ],
+    has_more: false,
+  }
+  slackHistoryExport.slack = {
+    channelHistory: () => Promise.resolve(mockObj),
+  }
+  const outputStream = streamTest['v2'].toText((err, result) => {
+    t.notOk(err, 'No error occurred')
+    const _result = JSON.parse(result)
+    t.deepEqual(_result, mockObj.messages)
+    t.end()
+  })
+  slackHistoryExport.fetchChannelHistory(outputStream, 'CHANNEL', null, false)
+})
+
 test(`SlackHistoryExport::fetchIMHistory
   should fetch more user history and stream out`, (t) => {
   const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
@@ -334,6 +446,72 @@ test(`SlackHistoryExport::fetchIMHistory
     t.end()
   })
   slackHistoryExport.fetchIMHistory(outputStream, 'CHANNEL', null, false)
+})
+
+test(`SlackHistoryExport::fetchChannelHistory
+  should fetch more channel history and stream out`, (t) => {
+  const slackHistoryExport = new SlackHistoryExport({ token: SLACK_API_TOKEN })
+  const mockObj1 = {
+    ok: true,
+    messages: [
+      {
+        type: 'message',
+        ts: '1358546515.000008',
+        user: 'U2147483896',
+        text: 'Hello',
+      },
+      {
+        type: 'message',
+        ts: '1358546515.000007',
+        user: 'U2147483896',
+        text: 'World',
+        is_starred: true,
+      },
+      {
+        type: 'something_else',
+        ts: '1358546515.000007',
+        wibblr: true,
+      },
+    ],
+    has_more: true,
+  }
+  const mockObj2 = {
+    ok: true,
+    messages: [
+      {
+        type: 'message',
+        ts: '1358546515.000008',
+        user: 'U2147483896',
+        text: 'Hello',
+      },
+      {
+        type: 'message',
+        ts: '1358546515.000007',
+        user: 'U2147483896',
+        text: 'World',
+        is_starred: true,
+      },
+      {
+        type: 'something_else',
+        ts: '1358546515.000007',
+        wibblr: true,
+      },
+    ],
+    has_more: false,
+  }
+  const stub = sinon.stub(slackHistoryExport.slack, 'channelHistory')
+  stub.onFirstCall().returns(Promise.resolve(mockObj1))
+  stub.onSecondCall().returns(Promise.resolve(mockObj2))
+
+
+  const outputStream = streamTest['v2'].toText((err, result) => {
+    t.notOk(err, 'No error occurred')
+    const _result = JSON.parse(result)
+    t.deepEqual(_result, mockObj1.messages.concat(mockObj2.messages))
+    slackHistoryExport.slack.channelHistory.restore()
+    t.end()
+  })
+  slackHistoryExport.fetchChannelHistory(outputStream, 'CHANNEL', null, false)
 })
 
 test(`SlackHistoryExport::fetchGroupHistory

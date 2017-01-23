@@ -32,3 +32,13 @@ export function getGroupInfo (groups, groupName) {
     return Promise.resolve(_group)
   return Promise.reject('GroupName is invalid, please check and try again.')
 }
+
+export function getChannelInfo (channels, chanName) {
+  const _channel = _.find(
+    channels.channels,
+    channel => channel.name.toLowerCase() === chanName.toLowerCase()
+  )
+  if (_channel)
+    return Promise.resolve(_channel)
+  return Promise.reject('ChannelName is invalid, please check and try again.')
+}

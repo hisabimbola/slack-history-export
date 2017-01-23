@@ -45,6 +45,10 @@ Download message history from slack`
     alias: 'g',
     describe: 'Name of the group to download history',
   })
+  .option('channel', {
+    alias: 'c',
+    describe: 'Name of the channel to download history',
+  })
   .option('filepath', {
     alias: 'f',
     default: 'stdout',
@@ -65,7 +69,22 @@ Download message history from slack`
 
 const slackHistoryExport = new SlackHistoryExport(args)
 
+// const successCallback = function successCallback (result) {
+//   console.log(result)
+//   console.log('History successfully exported')
+// }
+
+// const errorCallback = function errorCallback (error) {
+//   console.error(error)
+//   process.exit(1)
+// }
 if (args.username)
   slackHistoryExport.processIMs(args.filepath)
+    // .then(successCallback)
+    // .catch(errorCallback)
 else if (args.group)
   slackHistoryExport.processGroups(args.filepath)
+else if (args.channel)
+  slackHistoryExport.processChannels(args.filepath)
+    // .then(successCallback)
+    // .catch(errorCallback)

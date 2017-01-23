@@ -3,7 +3,55 @@ import {
   getUserInfo,
   getUserIMInfo,
   getGroupInfo,
+  getChannelInfo,
 } from 'utils'
+
+test(`getChannelInfo
+  should be a function`, (t) => {
+  t.equal(typeof getChannelInfo, 'function', 'getChannelInfo is a function')
+  t.end()
+})
+
+test(`getChannelInfo
+  should find channel in a list of channels`, (t) => {
+  const mockChannelList = {
+    channels: [
+      {
+        id: 'U023BECGF',
+        name: 'admins',
+      },
+    ],
+  }
+  const chanName = 'admins'
+  getChannelInfo(mockChannelList, chanName).then((result) => {
+    t.ok(result)
+    t.equal(result.name, 'admins', 'Channel details is returned')
+    t.end()
+  })
+})
+
+test(`getChannelInfo
+  should return an error if channel name does not exist`, (t) => {
+  const mockChannelList = {
+    channels: [
+      {
+        id: 'U023BECGF',
+        name: 'admins',
+      },
+    ],
+  }
+  const chanName = 'Anonymous'
+  getChannelInfo(mockChannelList, chanName)
+    .then(t.fail)
+    .catch((error) => {
+      t.ok(error)
+      t.equal(
+        error,
+        'ChannelName is invalid, please check and try again.',
+        'Error message is returned.')
+      t.end()
+    })
+})
 
 test(`getGroupInfo
   should be a function`, (t) => {
@@ -51,6 +99,7 @@ test(`getGroupInfo
       t.end()
     })
 })
+
 test(`getUserInfo
   should be a function`, (t) => {
   t.equal(typeof getUserInfo, 'function', 'getUserInfo is a function')
