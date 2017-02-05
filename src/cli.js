@@ -1,10 +1,15 @@
 import yargs from 'yargs'
 import fs from 'fs'
+import log from 'npmlog'
 import SlackHistoryExport from './main'
 
 import { version } from '../package.json'
 
 process.title = 'slack-history-export'
+
+log._error = log.error
+log.error = customErrorHandler
+log.enableColor()
 
 const args = yargs
   .usage(
@@ -45,6 +50,16 @@ Download message history from slack`
     alias: 'g',
     describe: 'Name of the group to download history',
   })
+  .option('logLevel', {
+    alias: 'l',
+    default: 'info',
+    describe: 'Enable and set log level',
+    choices: ['info', 'silly', 'verbose', 'warn', 'error'],
+    coerce: (level) => {
+      log.level = level
+      return level
+    },
+  })
   .option('channel', {
     alias: 'c',
     describe: 'Name of the channel to download history',
@@ -58,33 +73,39 @@ Download message history from slack`
     if (arg !== 'stdout')
       return fs.createWriteStream(String(arg))
 
+    // No output file given, log to file to not disturb stdout/stderr
+    log.stream = fs.createWriteStream('slack-history-export.log')
+
     return process.stdout
-  })
-  .option('debug', {
-    alias: 'd',
-    describe: 'Switch to debug mode',
   })
   .argv
 
+const slackHistoryExport = new SlackHistoryExport(args, log)
 
-const slackHistoryExport = new SlackHistoryExport(args)
+function customErrorHandler (...params) {
+  console.error(...params)
+  log._error(...params)
+}
 
-// const successCallback = function successCallback (result) {
-//   console.log(result)
-//   console.log('History successfully exported')
-// }
+process.on('exit', () => {
+  log.disableProgress()
+})
+const successCallback = function successCallback () {
+  log.info('', 'History successfully exported')
+}
 
-// const errorCallback = function errorCallback (error) {
-//   console.error(error)
-//   process.exit(1)
-// }
+const errorCallback = function errorCallback (error) {
+  log.error('Error:', error)
+}
 if (args.username)
   slackHistoryExport.processIMs(args.filepath)
-    // .then(successCallback)
-    // .catch(errorCallback)
+    .then(successCallback)
+    .catch(errorCallback)
 else if (args.group)
   slackHistoryExport.processGroups(args.filepath)
+    .then(successCallback)
+    .catch(errorCallback)
 else if (args.channel)
   slackHistoryExport.processChannels(args.filepath)
-    // .then(successCallback)
-    // .catch(errorCallback)
+    .then(successCallback)
+    .catch(errorCallback)
