@@ -84,6 +84,7 @@
     "streamtest": "^1.2.2",
     "tap-spec": "^4.1.1",
     "tape": "^4.6.0",
+    "tmp": "^0.0.31",
     "validate-commit-msg": "^2.8.0"
   },
   "engines": {
