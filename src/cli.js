@@ -2,6 +2,7 @@ import yargs from 'yargs'
 import fs from 'fs'
 import log from 'npmlog'
 import SlackHistoryExport from './main'
+import { fetchToken } from './utils'
 
 import { version } from '../package.json'
 
@@ -29,12 +30,10 @@ Download message history from slack`
     type: 'boolean',
   })
   .version('version', 'Show version number.', () => version)
-
   .option('token', {
     alias: 't',
     describe: `Slack Token. You can generate it
     from here https://api.slack.com/web`,
-    demand: true,
   })
   .option('type', {
     alias: 'T',
@@ -80,6 +79,9 @@ Download message history from slack`
   })
   .argv
 
+
+args.token = args.t = fetchToken(args.token)
+
 const slackHistoryExport = new SlackHistoryExport(args, log)
 
 function customErrorHandler (...params) {
@@ -97,6 +99,7 @@ const successCallback = function successCallback () {
 const errorCallback = function errorCallback (error) {
   log.error('Error:', error)
 }
+
 if (args.username)
   slackHistoryExport.processIMs(args.filepath)
     .then(successCallback)

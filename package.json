@@ -99,8 +99,10 @@
   },
   "dependencies": {
     "lodash": "^4.17.2",
+    "nconf": "^0.8.4",
     "npmlog": "^4.0.2",
     "slack": "^8.1.2",
+    "untildify": "^3.0.2",
     "yargs": "^6.5.0"
   }
 }

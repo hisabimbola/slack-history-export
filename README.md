@@ -27,7 +27,17 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
     -g, --group [value]      Enter the name of the group you will like to download
     -d, --directory [value]  Directory to save generated file
     -f, --filename [value]   Name of generated file. Default is "<current timestamp><username || channel || group>-slack-history" e.g '1443378584156-abimbola-slack-history.json'
-    -F, --format [value]     Format you want to download the data, supported format is [csv, json], default is 'json'
+  ```
+
+  You can provide token to the module in several ways
+  * CLI flag
+  * Environment variable `SLACK_HISTORY_EXPORT_TOKEN`
+  * File. File location is `~/.config/slack-history-export/config.json` with key of `SLACK_HISTORY_EXPORT_TOKEN`
+  ```
+  {
+    "SLACK_HISTORY_EXPORT_TOKEN": "testingtoken"
+  }
+
   ```
 ## Usage
 ```

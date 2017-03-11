@@ -1,4 +1,18 @@
 import _ from 'lodash'
+import nconf from 'nconf'
+import untildify from 'untildify'
+
+export function fetchToken (token) {
+  if (token)
+    return token
+  // TODO: Can improve by allowing users to pass in the file path for token
+  // Setup nconf hierachy token resolve
+  nconf
+    .env()
+    .file({ file: untildify('~/.config/slack-history-export/config.json') })
+
+  return nconf.get('SLACK_HISTORY_EXPORT_TOKEN')
+}
 
 export function getUserInfo (users, username) {
   const _user = _.find(
