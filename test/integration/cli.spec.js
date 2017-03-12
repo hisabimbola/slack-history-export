@@ -45,6 +45,19 @@ test(`CLI
 })
 
 test(`CLI
+  should export slack im history`, (t) => {
+  exec(`${binPath} -t ${SLACK_API_TOKEN}`,
+    (error, stdout, stderr) => {
+      t.false(error, 'returns no error')
+      t.ok(
+        /Export type not suppported/.test(stderr),
+        'Should throw an error when an no type is passed'
+      )
+      t.end()
+    })
+})
+
+test(`CLI
   should error export slack im history`, (t) => {
   const fileObj = tmp.fileSync()
   exec(`${binPath} -t ${SLACK_API_TOKEN} -u Invalid -f ${fileObj.name}`,

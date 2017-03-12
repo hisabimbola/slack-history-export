@@ -4,6 +4,7 @@ import {
   getUserIMInfo,
   getGroupInfo,
   getChannelInfo,
+  fetchToken,
 } from 'utils'
 
 test(`getChannelInfo
@@ -202,4 +203,27 @@ test(`getUserIMInfo
         'Error message is returned.')
       t.end()
     })
+})
+
+test(`fetchToken
+  should return token if passed in`, (t) => {
+  const token = 'testingToken'
+  const result = fetchToken(token)
+  const message = 'Passed in token is returned'
+  t.equal(token, result, message)
+  t.end()
+})
+
+test(`fetchToken
+  should fetch token from env var`, (t) => {
+  const token = 'testingToken'
+  // Store old value, so can be restored
+  const oldEnvVar = process.env.SLACK_HISTORY_EXPORT_TOKEN
+  process.env.SLACK_HISTORY_EXPORT_TOKEN = token
+  const result = fetchToken()
+  const message = 'Token is fetched from the set env variable'
+  t.equal(token, result, message)
+  // Restore old value
+  process.env.SLACK_HISTORY_EXPORT_TOKEN = oldEnvVar
+  t.end()
 })

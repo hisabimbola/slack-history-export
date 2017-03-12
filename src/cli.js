@@ -112,3 +112,6 @@ else if (args.channel)
   slackHistoryExport.processChannels(args.filepath)
     .then(successCallback)
     .catch(errorCallback)
+else
+  log.error('Error:', 'Export type not suppported')
+
