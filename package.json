@@ -31,6 +31,7 @@
     "prepublish": "npm run build",
     "codecov": "cat ./coverage/lcov.info | codecov",
     "coverage": "npm run lint && npm run clean && cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text npm test",
+    "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
     "local": "npm run clean && npm run build && node bin/cli.js",
     "coverage:html": "npm run lint && cross-env NODE_ENV=test nyc --reporter=html npm test",
     "lint": "./scripts/lint src test"
