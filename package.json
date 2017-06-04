@@ -1,6 +1,6 @@
 {
   "name": "slack-history-export",
-  "version": "0.4.1",
+  "version": "0.0.0-development",
   "description": "Command line module to export slack history",
   "keywords": [
     "slack",
@@ -16,7 +16,7 @@
   "main": "",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hisabimbola/slack-history-export.git"
+    "url": "https://github.com/hisabimbola/slack-history-export.git"
   },
   "bin": {
     "slack-history-export": "bin/cli.js"
@@ -34,7 +34,8 @@
     "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
     "local": "npm run clean && npm run build && node bin/cli.js",
     "coverage:html": "npm run lint && cross-env NODE_ENV=test nyc --reporter=html npm test",
-    "lint": "./scripts/lint src test"
+    "lint": "./scripts/lint src test",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "config": {
     "commitizen": {
@@ -81,6 +82,7 @@
     "ghooks": "^1.3.2",
     "nyc": "^8.1.0",
     "rimraf": "^2.6.1",
+    "semantic-release": "^6.3.6",
     "sinon": "^1.17.6",
     "streamtest": "^1.2.2",
     "tap-spec": "^4.1.1",

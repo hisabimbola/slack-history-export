@@ -1,8 +1,38 @@
+sudo: false
+
 language: node_js
+
+cache:
+  directories:
+    - node_modules
+
+notifications:
+  email: false
+
 node_js:
-- '4'
-- '6'
+  - '7'
+  - '6'
+  - '4'
+
+branches:
+  only:
+    - master
+
+before_script:
+  - npm prune
+
 script:
-- npm run coverage
-- npm run check-coverage
-- npm run codecov
+  - npm run coverage
+  - npm run check-coverage
+
+after_success:
+  - npm run codecov
+  - npm run semantic-release
+
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
+
+git:
+  depth: 1
+
