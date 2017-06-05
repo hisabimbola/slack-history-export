@@ -1,50 +1,111 @@
 {
   "name": "slack-history-export",
-  "version": "0.4.1",
+  "version": "0.0.0-development",
   "description": "Command line module to export slack history",
-  "scripts": {
-    "clean": "rm -rf lib",
-    "build": "babel --optional runtime src --out-dir lib",
-    "prepublish": "npm run build",
-    "local": "npm run clean && npm run build && node bin/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hisabimbola/slack-history-export.git"
-  },
   "keywords": [
     "slack",
     "export",
     "es6"
   ],
-  "bin": {
-    "slack-history-export": "bin/cli.js"
-  },
-  "author": "Abimbola Idowu <abimbola2010@gmail.com> (http://hisabimbola.com)",
-  "preferGlobal": true,
-  "license": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/hisabimbola/winston-firebase/blob/master/LICENSE"
-    }
-  ],
+  "homepage": "https://github.com/hisabimbola/slack-history-export#readme",
   "bugs": {
     "url": "https://github.com/hisabimbola/slack-history-export/issues"
   },
-  "homepage": "https://github.com/hisabimbola/slack-history-export#readme",
+  "license": "MIT",
+  "author": "Abimbola Idowu <abimbola2010@gmail.com> (http://hisabimbola.com)",
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hisabimbola/slack-history-export.git"
+  },
+  "bin": {
+    "slack-history-export": "bin/cli.js"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "test": "npm run build && cross-env NODE_ENV=test NODE_PATH=./src babel-node node_modules/.bin/tape test/*.spec.js test/**/*.spec.js | tap-spec",
+    "test:watch": "chokidar src test bin -c 'npm test'",
+    "build": "npm run clean && babel src -d lib",
+    "clean": "rimraf lib/* coverage",
+    "commit": "git-cz",
+    "prepublish": "npm run build",
+    "codecov": "cat ./coverage/lcov.info | codecov",
+    "coverage": "npm run lint && npm run clean && cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text npm test",
+    "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
+    "local": "npm run clean && npm run build && node bin/cli.js",
+    "coverage:html": "npm run lint && cross-env NODE_ENV=test nyc --reporter=html npm test",
+    "lint": "./scripts/lint src test",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    },
+    "ghooks": {
+      "commit-msg": "validate-commit-msg",
+      "pre-commit": "./scripts/lint-staged-files"
+    }
+  },
+  "eslintConfig": {
+    "extends": "commercetools",
+    "settings": {
+      "import/resolver": {
+        "node": {
+          "paths": [
+            "src/"
+          ]
+        }
+      }
+    }
+  },
+  "files": [
+    "lib/",
+    "bin/cli.js"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-eslint": "^6.1.2",
+    "babel-plugin-istanbul": "^2.0.1",
+    "babel-preset-es2015": "^6.14.0",
+    "chokidar-cli": "^1.2.0",
+    "codecov": "^1.0.1",
+    "commitizen": "^2.8.6",
+    "cross-env": "^2.0.1",
+    "cz-conventional-changelog": "^1.2.0",
+    "eslint": "^3.6.0",
+    "eslint-config-airbnb": "^12.0.0",
+    "eslint-config-commercetools": "^4.0.0",
+    "eslint-formatter-pretty": "^1.0.0",
+    "eslint-plugin-import": "^1.16.0",
+    "eslint-plugin-jsx-a11y": "^2.2.2",
+    "eslint-plugin-react": "^6.3.0",
+    "ghooks": "^1.3.2",
+    "nyc": "^8.1.0",
+    "rimraf": "^2.6.1",
+    "semantic-release": "^6.3.6",
+    "sinon": "^1.17.6",
+    "streamtest": "^1.2.2",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.0",
+    "tmp": "^0.0.31",
+    "validate-commit-msg": "^2.8.0"
+  },
+  "engines": {
+    "node": ">= 4.5.0"
+  },
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ],
+    "sourceMap": false,
+    "instrument": false
+  },
   "dependencies": {
-    "babel": "^5.8.23",
-    "babel-runtime": "^5.8.25",
-    "chalk": "^1.1.3",
-    "commander": "^2.8.1",
-    "csv": "^0.4.6",
-    "fast-csv": "^2.0.0",
-    "jsonfile": "^2.2.2",
-    "lodash": "^3.10.1",
+    "lodash": "^4.17.2",
     "nconf": "^0.8.4",
-    "pleasant-progress": "^1.1.0",
-    "slack-api-client": "0.0.2",
-    "update-notifier": "^0.5.0"
+    "npmlog": "^4.0.2",
+    "slack": "^8.1.2",
+    "untildify": "^3.0.2",
+    "yargs": "^6.5.0"
   }
 }

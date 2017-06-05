@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Lints staged js-files
+
+# find staged files which end in ".js"
+# eslint will exclude the ones ignored by .eslintignore even if we pass them
+# explicitly
+FILES="$(git diff --cached --name-only --diff-filter=ACM | grep '\.js$')"
+
+if [ $? -eq 0 ]; then
+  # lint these files
+  ./scripts/lint $FILES
+else
+  exit 0
+fi

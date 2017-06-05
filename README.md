@@ -4,6 +4,11 @@ Command line module to allow you download your slack history.
 Supports IM/DM, channels and private groups now, support for multiparty direct message coming soon.
 
 
+[![Travis Build Status][travis-icon]][travis]
+[![Codecov Coverage Status][codecov-icon]][codecov]
+[![David Dependencies Status][david-icon]][david]
+[![David devDependencies Status][david-dev-icon]][david-dev]
+
 ## Installation
   ```
   npm install slack-history-export -g
@@ -22,18 +27,32 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
     -g, --group [value]      Enter the name of the group you will like to download
     -d, --directory [value]  Directory to save generated file
     -f, --filename [value]   Name of generated file. Default is "<current timestamp><username || channel || group>-slack-history" e.g '1443378584156-abimbola-slack-history.json'
-    -F, --format [value]     Format you want to download the data, supported format is [csv, json], default is 'json'
+  ```
+
+  You can provide token to the module in several ways
+  * CLI flag
+  * Environment variable `SLACK_HISTORY_EXPORT_TOKEN`
+  * File. File location is `~/.config/slack-history-export/config.json` with key of `SLACK_HISTORY_EXPORT_TOKEN`
+  ```
+  {
+    "SLACK_HISTORY_EXPORT_TOKEN": "testingtoken"
+  }
+
   ```
 ## Usage
 ```
 slack-history-export -t "slack-token-123456abcde" -u abimbola -F csv
 ```
+
 ## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md) for info on contributing to slack-history-export
 
-Fork and submit pull requests to improve this tool
 
-## Issues/Features requests
-
-Yes, there would be bugs or feature requests.
-
-Please open an issue [here](https://github.com/andela-aidowu/slack-history-export/issues/new) and I would try to reply as soon as possible
+[travis]: https://travis-ci.org/hisabimbola/slack-history-export
+[travis-icon]: https://img.shields.io/travis/hisabimbola/slack-history-export/master.svg?style=flat-square
+[codecov]: https://codecov.io/gh/hisabimbola/slack-history-export
+[codecov-icon]: https://img.shields.io/codecov/c/github/hisabimbola/slack-history-export.svg?style=flat-square
+[david]: https://david-dm.org/hisabimbola/slack-history-export
+[david-icon]: https://img.shields.io/david/hisabimbola/slack-history-export.svg?style=flat-square
+[david-dev]: https://david-dm.org/hisabimbola/slack-history-export?type=dev
+[david-dev-icon]: https://img.shields.io/david/dev/hisabimbola/slack-history-export.svg?style=flat-square

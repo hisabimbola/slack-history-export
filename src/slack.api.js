@@ -1,112 +1,113 @@
-#! /usr/bin/env node
+import slack from 'slack'
 
-'use strict';
-
-let SlackClient = require('slack-api-client');
-
-export class SlackAPI {
-  constructor(token) {
-    this.slackToken = token;
-    this.slack = SlackAPI.initSlack(this.slackToken);
-  }
-  static initSlack(token) {
-    return new SlackClient(token);
+export default class SlackAPI {
+  constructor (token) {
+    this.token = token
+    this.slack = slack
   }
 
-  users() {
+  users () {
     return new Promise((resolve, reject) => {
-      this.slack.api.users.list((err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      this.slack.users.list({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  channels() {
+  channels () {
     return new Promise((resolve, reject) => {
-      this.slack.api.channels.list({}, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      this.slack.channels.list({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  channelsHistory(opts) {
+  channelHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.api.channels.history(opts, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      const params = { token: this.token, channel, latest }
+      this.slack.channels.history(params, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  groups() {
+  groups () {
     return new Promise((resolve, reject) => {
-      this.slack.api.groups.list({}, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      this.slack.groups.list({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  groupHistory(opts) {
+  groupHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.api.groups.history(opts, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      const params = { token: this.token, channel, latest }
+      this.slack.groups.history(params, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  im() {
+  im () {
     return new Promise((resolve, reject) => {
-      this.slack.api.im.list((err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      this.slack.im.list({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  imHistory(opts) {
+  imHistory (channel, latest) {
     return new Promise((resolve, reject) => {
-      this.slack.api.im.history(opts, (err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      const params = { token: this.token, channel, latest }
+      this.slack.im.history(params, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
-
-  getSelfData() {
+  mpim () {
     return new Promise((resolve, reject) => {
-      this.slack.api.auth.test((err, res) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
+      this.slack.mpim.list({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
+  }
+  mpimHistory (channel, latest) {
+    return new Promise((resolve, reject) => {
+      const params = { token: this.token, channel, latest }
+      this.slack.mpim.history(params, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
+  }
+  getSelfData () {
+    return new Promise((resolve, reject) => {
+      this.slack.auth.test({ token: this.token }, (err, res) => {
+        if (err)
+          reject(err)
+        else
+          resolve(res)
+      })
+    })
   }
 }
-
