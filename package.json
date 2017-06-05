@@ -1,6 +1,6 @@
 {
   "name": "slack-history-export",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "Command line module to export slack history",
   "keywords": [
     "slack",
