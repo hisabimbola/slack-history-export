@@ -19,7 +19,7 @@
     "url": "https://github.com/hisabimbola/slack-history-export.git"
   },
   "bin": {
-    "slack-history-export": "bin/cli.js"
+    "slack-history-export": "bin/slack-history-export.js"
   },
   "preferGlobal": true,
   "scripts": {
