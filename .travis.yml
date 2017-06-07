@@ -33,6 +33,3 @@ branches:
   except:
     - /^v\d+\.\d+\.\d+$/
 
-git:
-  depth: 1
-
