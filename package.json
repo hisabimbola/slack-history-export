@@ -1,6 +1,6 @@
 {
   "name": "slack-history-export",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Command line module to export slack history",
   "keywords": [
     "slack",
@@ -32,7 +32,7 @@
     "codecov": "cat ./coverage/lcov.info | codecov",
     "coverage": "npm run lint && npm run clean && cross-env NODE_ENV=test nyc --reporter=lcov --reporter=text npm test",
     "check-coverage": "nyc check-coverage --lines 100 --functions 100 --branches 100",
-    "local": "npm run clean && npm run build && node bin/cli.js",
+    "local": "npm run clean && npm run build && node bin/slack-history-export.js",
     "coverage:html": "npm run lint && cross-env NODE_ENV=test nyc --reporter=html npm test",
     "lint": "./scripts/lint src test",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
@@ -58,10 +58,6 @@
       }
     }
   },
-  "files": [
-    "lib/",
-    "bin/cli.js"
-  ],
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-eslint": "^6.1.2",
