@@ -60,7 +60,7 @@
   },
   "files": [
     "lib/",
-    "bin/cli.js"
+    "bin/"
   ],
   "devDependencies": {
     "babel-cli": "^6.14.0",
