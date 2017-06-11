@@ -137,7 +137,7 @@ test(`SlackApi::users
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'User list method first arg is params containing token'
+      'User list method first arg is params containing token',
     )
     t.ok(result, 'Users list is resolved successfully')
     t.end()
@@ -163,7 +163,7 @@ test(`SlackApi::channels
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'Channels list method first arg is params containing token'
+      'Channels list method first arg is params containing token',
     )
     t.ok(result, 'Channels list is resolved successfully')
     t.end()
@@ -189,7 +189,7 @@ test(`SlackApi::channelHistory
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN, latest: undefined, channel: undefined },
-      'Channels history method first arg is params containing token'
+      'Channels history method first arg is params containing token',
     )
     t.ok(result, 'Channel history is resolved successfully')
     t.end()
@@ -215,7 +215,7 @@ test(`SlackApi::groups
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'Groups list method first arg is params containing token'
+      'Groups list method first arg is params containing token',
     )
     t.ok(result, 'Groups list promise is resolved successfully')
     t.end()
@@ -241,7 +241,7 @@ test(`SlackApi::groupHistory
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN, latest: undefined, channel: undefined },
-      'Groups history method first arg is params containing token'
+      'Groups history method first arg is params containing token',
     )
     t.ok(result, 'Groups history promise is resolved successfully')
     t.end()
@@ -267,7 +267,7 @@ test(`SlackApi::im
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'Im list method first arg is params containing token'
+      'Im list method first arg is params containing token',
     )
     t.ok(result, 'Im promise is resolved successfully')
     t.end()
@@ -293,7 +293,7 @@ test(`SlackApi::imHistory
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN, latest: undefined, channel: undefined },
-      'Im history method first arg is params containing token'
+      'Im history method first arg is params containing token',
     )
     t.ok(result, 'Im history promise is resolved successfully')
     t.end()
@@ -319,7 +319,7 @@ test(`SlackApi::mpim
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'Mpim list method first arg is params containing token'
+      'Mpim list method first arg is params containing token',
     )
     t.ok(result, 'mpim list promise is resolved successfully')
     t.end()
@@ -345,7 +345,7 @@ test(`SlackApi::mpimHistory
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN, latest: undefined, channel: undefined },
-      'Mpim history method first arg is params containing token'
+      'Mpim history method first arg is params containing token',
     )
     t.ok(result, 'mpim history promise is resolved successfully')
     t.end()
@@ -371,7 +371,7 @@ test(`SlackApi::getSelfData
     t.deepEqual(
       spy.args[0][0],
       { token: SLACK_API_TOKEN },
-      'Auth test method first arg is params containing token'
+      'Auth test method first arg is params containing token',
     )
     t.ok(result, 'getSelfData promise is resolved successfully')
     t.end()

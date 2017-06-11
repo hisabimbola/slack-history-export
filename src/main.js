@@ -16,18 +16,18 @@ export default class SlackHistoryExport {
   processIMs (outputStream) {
     return this.fetchUserDetail(this.args.username).then(
       userObj => this.fetchIMInfo(userObj).then(
-        imInfo => this.fetchIMHistory(outputStream, imInfo.id)
-      )
+        imInfo => this.fetchIMHistory(outputStream, imInfo.id),
+      ),
     )
   }
   processGroups (outputStream) {
     return this.fetchGroupDetails(this.args.group).then(
-      groupObj => this.fetchGroupHistory(outputStream, groupObj.id)
+      groupObj => this.fetchGroupHistory(outputStream, groupObj.id),
     )
   }
   processChannels (outputStream) {
     return this.fetchChannelDetails(this.args.channel).then(
-      channelObj => this.fetchChannelHistory(outputStream, channelObj.id)
+      channelObj => this.fetchChannelHistory(outputStream, channelObj.id),
     )
   }
   fetchGroupDetails (groupName) {
@@ -47,6 +47,10 @@ export default class SlackHistoryExport {
       outputStream.write('[\n')
     return this.slack.groupHistory(channel, latest).then((groupHistory) => {
       _.each(groupHistory.messages, (message, index) => {
+        /* eslint-disable no-param-reassign */
+        message.timestamp = +(message.ts * 1e3).toString().split('.')[0]
+        message.isoDate = new Date(message.timestamp)
+        /* eslint-enable no-param-reassign */
         outputStream.write(JSON.stringify(message, null, 2))
 
         if (groupHistory.has_more || index !== groupHistory.messages.length - 1)
@@ -71,6 +75,10 @@ export default class SlackHistoryExport {
       outputStream.write('[\n')
     return this.slack.channelHistory(channel, latest).then((chanHistory) => {
       _.each(chanHistory.messages, (message, index) => {
+        /* eslint-disable no-param-reassign */
+        message.timestamp = +(message.ts * 1e3).toString().split('.')[0]
+        message.isoDate = new Date(message.timestamp)
+        /* eslint-enable no-param-reassign */
         outputStream.write(JSON.stringify(message, null, 2))
 
         if (chanHistory.has_more || index !== chanHistory.messages.length - 1)

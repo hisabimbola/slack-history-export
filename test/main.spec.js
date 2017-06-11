@@ -27,19 +27,19 @@ test(`SlackHistoryExport
   t.ok(slackHistoryExport.fetchIMInfo, 'fetchIMInfo method is present')
   t.ok(
     slackHistoryExport.fetchGroupHistory,
-    'fetchGroupHistory method is present'
+    'fetchGroupHistory method is present',
   )
   t.ok(
     slackHistoryExport.fetchGroupDetails,
-    'fetchGroupDetails method is present'
+    'fetchGroupDetails method is present',
   )
   t.ok(
     slackHistoryExport.fetchChannelDetails,
-    'fetchChannelDetails method is present'
+    'fetchChannelDetails method is present',
   )
   t.ok(
     slackHistoryExport.fetchChannelHistory,
-    'fetchChannelHistory method is present'
+    'fetchChannelHistory method is present',
   )
   t.end()
 })
@@ -153,13 +153,39 @@ test(`SlackHistoryExport::fetchIMHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   slackHistoryExport.slack = {
     imHistory: () => Promise.resolve(mockObj),
   }
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj.messages)
+    t.deepEqual(_result, expectedResult)
     t.end()
   })
   slackHistoryExport.fetchIMHistory(outputStream, 'CHANNEL', null, false)
@@ -216,6 +242,56 @@ test(`SlackHistoryExport::fetchIMHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   const stub = sinon.stub(slackHistoryExport.slack, 'imHistory')
   stub.onFirstCall().returns(Promise.resolve(mockObj1))
   stub.onSecondCall().returns(Promise.resolve(mockObj2))
@@ -224,7 +300,7 @@ test(`SlackHistoryExport::fetchIMHistory
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj1.messages.concat(mockObj2.messages))
+    t.deepEqual(_result, expectedResult)
     slackHistoryExport.slack.imHistory.restore()
     t.end()
   })
@@ -258,13 +334,39 @@ test(`SlackHistoryExport::fetchGroupHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   slackHistoryExport.slack = {
     groupHistory: () => Promise.resolve(mockObj),
   }
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj.messages)
+    t.deepEqual(_result, expectedResult)
     t.end()
   })
   slackHistoryExport.fetchGroupHistory(outputStream, 'CHANNEL', null, false)
@@ -321,6 +423,56 @@ test(`SlackHistoryExport::fetchGroupHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   const stub = sinon.stub(slackHistoryExport.slack, 'groupHistory')
   stub.onFirstCall().returns(Promise.resolve(mockObj1))
   stub.onSecondCall().returns(Promise.resolve(mockObj2))
@@ -329,7 +481,7 @@ test(`SlackHistoryExport::fetchGroupHistory
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj1.messages.concat(mockObj2.messages))
+    t.deepEqual(_result, expectedResult)
     slackHistoryExport.slack.groupHistory.restore()
     t.end()
   })
@@ -363,13 +515,39 @@ test(`SlackHistoryExport::fetchChannelHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   slackHistoryExport.slack = {
     channelHistory: () => Promise.resolve(mockObj),
   }
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj.messages)
+    t.deepEqual(_result, expectedResult)
     t.end()
   })
   slackHistoryExport.fetchChannelHistory(outputStream, 'CHANNEL', null, false)
@@ -426,6 +604,56 @@ test(`SlackHistoryExport::fetchChannelHistory
     ],
     has_more: false,
   }
+  const expectedResult = [
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000008',
+      user: 'U2147483896',
+      text: 'Hello',
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'message',
+      ts: '1358546515.000007',
+      user: 'U2147483896',
+      text: 'World',
+      is_starred: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+    {
+      type: 'something_else',
+      ts: '1358546515.000007',
+      wibblr: true,
+      timestamp: 1358546515000,
+      isoDate: '2013-01-18T22:01:55.000Z',
+    },
+  ]
   const stub = sinon.stub(slackHistoryExport.slack, 'channelHistory')
   stub.onFirstCall().returns(Promise.resolve(mockObj1))
   stub.onSecondCall().returns(Promise.resolve(mockObj2))
@@ -434,7 +662,7 @@ test(`SlackHistoryExport::fetchChannelHistory
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
     const _result = JSON.parse(result)
-    t.deepEqual(_result, mockObj1.messages.concat(mockObj2.messages))
+    t.deepEqual(_result, expectedResult)
     slackHistoryExport.slack.channelHistory.restore()
     t.end()
   })
@@ -486,9 +714,10 @@ test(`SlackHistoryExport::processIMs
   const IMHistoryStub = sinon.stub(
     slackHistoryExport,
     'fetchIMHistory',
+  ).callsFake(
     (stream) => {
       stream.end(JSON.stringify(mockObj.messages))
-    }
+    },
   )
   const outputStream = streamTest['v2'].toText((err, result) => {
     t.notOk(err, 'No error occurred')
@@ -497,17 +726,17 @@ test(`SlackHistoryExport::processIMs
     t.equal(
       IMHistoryStub.args[0][1],
       mockUserObj2.id,
-      'IMInfo id is passed as 2nd argument to fetchIMHistory method'
+      'IMInfo id is passed as 2nd argument to fetchIMHistory method',
     )
     t.equal(
       userDetailStub.args[0][0],
       'Abi',
-      'username is passed to fetchUserDetail method'
+      'username is passed to fetchUserDetail method',
     )
     t.deepEqual(
       imInfoStub.args[0][0],
       mockUserObj,
-      'user object is passed to fetchIMInfo method'
+      'user object is passed to fetchIMInfo method',
     )
     t.end()
   })
@@ -550,9 +779,10 @@ test(`SlackHistoryExport::processGroups
   const groupHistoryStub = sinon.stub(
     slackHistoryExport,
     'fetchGroupHistory',
+  ).callsFake(
     (stream) => {
       stream.end(JSON.stringify(mockObj.messages))
-    }
+    },
   )
 
   const outputStream = streamTest['v2'].toText((err, result) => {
@@ -562,7 +792,7 @@ test(`SlackHistoryExport::processGroups
     t.equal(
       groupHistoryStub.args[0][1],
       mockGroupObj.id,
-      'Group id is passed as 2nd argument to fetchGroupHistory method'
+      'Group id is passed as 2nd argument to fetchGroupHistory method',
     )
     t.end()
   })
@@ -605,6 +835,7 @@ test(`SlackHistoryExport::processChannels
   const chanHistoryStub = sinon.stub(
     slackHistoryExport,
     'fetchChannelHistory',
+  ).callsFake(
     (stream) => {
       stream.end(JSON.stringify(mockObj.messages))
     })
@@ -617,7 +848,7 @@ test(`SlackHistoryExport::processChannels
     t.equal(
       chanHistoryStub.args[0][1],
       mockChannelObj.id,
-      'Channel id is passed as 2nd argument to fetchGroupHistory method'
+      'Channel id is passed as 2nd argument to fetchGroupHistory method',
     )
     t.end()
   })

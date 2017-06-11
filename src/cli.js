@@ -4,8 +4,6 @@ import log from 'npmlog'
 import SlackHistoryExport from './main'
 import { fetchToken } from './utils'
 
-import { version } from '../package.json'
-
 process.title = 'slack-history-export'
 
 log._error = log.error
@@ -16,7 +14,7 @@ const args = yargs
   .usage(
     `\n
 Usage: $0 [options]
-Download message history from slack`
+Download message history from slack`,
   )
   .showHelpOnFail(true)
 
@@ -29,7 +27,7 @@ Download message history from slack`
     alias: 'v',
     type: 'boolean',
   })
-  .version('version', 'Show version number.', () => version)
+  .version()
   .option('token', {
     alias: 't',
     describe: `Slack Token. You can generate it
@@ -80,7 +78,7 @@ Download message history from slack`
   .argv
 
 
-args.token = args.t = fetchToken(args.token)
+args.token = args.t = fetchToken(args.token) // eslint-disable-line
 
 const slackHistoryExport = new SlackHistoryExport(args, log)
 

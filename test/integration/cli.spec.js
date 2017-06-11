@@ -51,7 +51,7 @@ test(`CLI
       t.false(error, 'returns no error')
       t.ok(
         /Export type not suppported/.test(stderr),
-        'Should throw an error when an no type is passed'
+        'Should throw an error when an no type is passed',
       )
       t.end()
     })
@@ -66,7 +66,7 @@ test(`CLI
       t.ok(
         // eslint-disable-next-line no-bitwise
         ~stderr.indexOf('Username is invalid, please check and try again'),
-        'Invalid username error is returned'
+        'Invalid username error is returned',
       )
       fileObj.removeCallback()
       t.end()
