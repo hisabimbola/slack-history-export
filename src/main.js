@@ -95,6 +95,10 @@ export default class SlackHistoryExport {
       outputStream.write('[\n') // Use to detect the first call of the method
     return this.slack.imHistory(channel, latest).then((imHistory) => {
       _.each(imHistory.messages, (message, index) => {
+        /* eslint-disable no-param-reassign */
+        message.timestamp = +(message.ts * 1e3).toString().split('.')[0]
+        message.isoDate = new Date(message.timestamp)
+        /* eslint-enable no-param-reassign */
         outputStream.write(JSON.stringify(message, null, 2))
 
         if (imHistory.has_more || index !== imHistory.messages.length - 1)
