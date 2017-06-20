@@ -19,14 +19,18 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
   Usage: slack-history-export [options]
   Options:
 
-    -h, --help               output usage information
-    -V, --version            output the version number
-    -t, --token <value>      [REQUIRED] Enter your slack token API, you can generate it from here https://api.slack.com/web
-    -u, --username [value]   Enter username of the person whose chat history with you you will like to download
-    -c, --channel [value]    Enter the name of the channel you will like to download
-    -g, --group [value]      Enter the name of the group you will like to download
-    -d, --directory [value]  Directory to save generated file
-    -f, --filename [value]   Name of generated file. Default is "<current timestamp><username || channel || group>-slack-history" e.g '1443378584156-abimbola-slack-history.json'
+    --help, -h      Show help text.                                      [boolean]
+    --version, -v   Show version number                                  [boolean]
+    --token, -t     Slack Token. You can generate it
+                    from here https://api.slack.com/web
+    --type, -T      Type of export you want to do         [choices: "dm", "group"]
+    --username, -u  Username of the person who chat
+                    history with you you want to download
+    --group, -g     Name of the group to download history
+    --logLevel, -l  Enable and set log level
+          [choices: "info", "silly", "verbose", "warn", "error"] [default: "info"]
+    --channel, -c   Name of the channel to download history
+    --filepath, -f  Path to the json file to save the history  [default: "stdout"]
   ```
 
   You can provide token to the module in several ways
@@ -41,7 +45,7 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
   ```
 ## Usage
 ```
-slack-history-export -t "slack-token-123456abcde" -u abimbola -F csv
+slack-history-export -t "slack-token-123456abcde" -u abimbola -f 'amimbola.json'
 ```
 
 ## Contributing
