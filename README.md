@@ -22,7 +22,7 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
     --help, -h      Show help text.                                      [boolean]
     --version, -v   Show version number                                  [boolean]
     --token, -t     Slack Token. You can generate it
-                    from here https://api.slack.com/web
+                    from here https://api.slack.com/custom-integrations/legacy-tokens
     --type, -T      Type of export you want to do         [choices: "dm", "group"]
     --username, -u  Username of the person who chat
                     history with you you want to download
