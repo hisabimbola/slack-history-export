@@ -31,7 +31,7 @@ Download message history from slack`,
   .option('token', {
     alias: 't',
     describe: `Slack Token. You can generate it
-    from here https://api.slack.com/web`,
+    from here https://api.slack.com/custom-integrations/legacy-tokens`,
   })
   .option('type', {
     alias: 'T',
