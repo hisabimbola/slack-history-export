@@ -57,6 +57,11 @@ Download message history from slack`,
       return level
     },
   })
+  .option('delay', {
+    alias: 'd',
+    default: 1000,
+    describe: 'Milliseconds to delay between network calls',
+  })
   .option('channel', {
     alias: 'c',
     describe: 'Name of the channel to download history',

@@ -16,9 +16,10 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
 
 ## Options
   ```
-  Usage: slack-history-export [options]
-  Options:
+  Usage: slack-history-export.js [options]
+  Download message history from slack
 
+  Options:
     --help, -h      Show help text.                                      [boolean]
     --version, -v   Show version number                                  [boolean]
     --token, -t     Slack Token. You can generate it
@@ -29,6 +30,7 @@ Supports IM/DM, channels and private groups now, support for multiparty direct m
     --group, -g     Name of the group to download history
     --logLevel, -l  Enable and set log level
           [choices: "info", "silly", "verbose", "warn", "error"] [default: "info"]
+    --delay, -d     Milliseconds to delay between network calls    [default: 1000]
     --channel, -c   Name of the channel to download history
     --filepath, -f  Path to the json file to save the history  [default: "stdout"]
   ```
